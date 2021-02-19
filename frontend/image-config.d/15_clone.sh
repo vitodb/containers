@@ -10,7 +10,7 @@ cd /opt/
 for i in `printenv | grep GWMS_FE_VS_REPO`;
 do
         REPO=`echo $i | awk -F "=" '{print $2}'`;
-        INDEX=`echo $i | grep  -oEi '[0-9]+'`;
+        INDEX=`echo $i | awk -F "=" '{print $1}' | grep  -oEi '[0-9]+'`;
         echo "Cloning repo: "$REPO;
         BRANCH_VAR="GWMS_FE_VS_BRANCH_"$INDEX;
         BRANCH=`printenv | grep "$BRANCH_VAR" | awk -F "=" '{print $2}'`

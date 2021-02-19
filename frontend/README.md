@@ -12,11 +12,11 @@ in that case, make sure that the path were the certs are generated coincide with
 
 ## Validation scripts
 The Validation Scripts are cloned into the /opt/ directory within the image at runtime. To specify which repositories and branches within those repositories
-to clone, the ENV VARS `GWMS_VS_REPO_#` and `GWMS_VS_BRANCH_#` are used, e.g.,
+to clone, the ENV VARS `GWMS_FE_VS_REPO_#` and `GWMS_FE_VS_BRANCH_#` are used, e.g.,
 ```
-GWMS_VS_REPO_1="https://github.com/<MY REPO>.git"
-GWMS_VS_BRANCH_1="production"
-GWMS_VS_REPO_2="https://github.com/<ANOTHER REPO>.git"
+GWMS_FE_VS_REPO_1="https://github.com/<MY REPO>.git"
+GWMS_FE_VS_BRANCH_1="production"
+GWMS_FE_VS_REPO_2="https://github.com/<ANOTHER REPO>.git"
 ```
 
 The above would clone 2 repositories into /opt/. If no branch is specified the "master" branch is used.
