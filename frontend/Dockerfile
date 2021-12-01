@@ -1,4 +1,4 @@
-FROM opensciencegrid/software-base:3.5-el7-release-20210726-1346
+FROM opensciencegrid/software-base:software-base:3.5-el7-release-20211201-2122
 LABEL maintainer OSG Software <help@opensciencegrid.org>
 
 # Create the frontend user with a fixed GID/UID
@@ -7,10 +7,7 @@ LABEL maintainer OSG Software <help@opensciencegrid.org>
 RUN groupadd -o -g 993 frontend
 RUN useradd -o -u 996 -g 993 -s /bin/sh frontend
 
-# ddavila 20201125:
-# temporarily installing from osg-upcoming to get 3.7, this needs to be changed
-# once we can get 3.7 out of osg-release
-RUN yum -y --enablerepo=osg-upcoming-testing install glideinwms-vofrontend-standalone
+RUN yum -y install glideinwms-vofrontend-standalone
 
 RUN yum -y install vo-client \
     git
