@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Creating the lock for renewal proxy
 # what systemctl start gwms-renew-proxies would do
 #
