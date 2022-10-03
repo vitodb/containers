@@ -10,7 +10,7 @@
 #  if date_tag id true a date tag is added to the Docker Hub label (+%Y%m%d-%H%M)
 # -X POST is also optional
 
-name: Build and Push Docker image (release)
+name: Build and Push Docker image for workers (release)
 
 on:
   push:
@@ -42,7 +42,7 @@ jobs:
             echo "OSG_VERISON=${GITHUB_REF##*/}" >> $GITHUB_ENV
           fi
 
-      - name: set label
+      - name: set label from parameter
         id: setlabel_parameter
         continue-on-error: true
         if: ${{ github.event.client_payload.label }}
