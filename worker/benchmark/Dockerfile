@@ -26,7 +26,8 @@ RUN yum install -y http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-g
     yum install -y --disablerepo=slf* git;\
     yum install -y yum-conf-extras;\
     yum --disablerepo=epel,osg list podman;\
-    yum install -y podman buildah curl screen
+    yum install -y podman buildah curl screen;\
+    yum install -y apptainer
 
 # Cleaning caches to reduce size of image
 RUN yum clean all
