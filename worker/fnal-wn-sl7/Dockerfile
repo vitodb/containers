@@ -20,10 +20,13 @@ RUN yum install -y wget sed ;\
 # Assigning EPEL YUM prio of 99
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm ;\ 
     yum install -y yum-priorities ;\
-    yum install -y https://repo.opensciencegrid.org/osg/3.5/osg-3.5-el7-release-latest.rpm ;\
+    yum install -y https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el7-release-latest.rpm ;\
     # /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo ;\
     # echo "priority=80" >> /etc/yum.repos.d/osg.repo ;\
     echo "exclude=*condor*" >> /etc/yum.repos.d/osg.repo
+
+# install yum-conf-extras to enable sl-extras repo
+RUN yum install -y yum-conf-extras
 
 # Installing packages
 # Singularity version has been explicitly specified to control upgrades
@@ -36,6 +39,7 @@ RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
 #  ftgl gl2ps libGLEW giflib libAfterImage [LArSoft v09_16_00, V. Di Benedetto, RITM1085514]
 #  perl libraries: perl perl-autodie ...  perl-Scalar-List-Utils [Mu2e S.Soleti R.Kutschke, INC000001118312] 
 #  jq [SBND Mateus F. Carneiro, RITM1235906]
+#  htgettoken [Mu2e, Ray Culbertson, as part of RITM1572512]
 # OSG has only: osg-wn-client redhat-lsb-core singularity
 # removed:  gfal2-plugin-xrootd-2.18.1-2.el7.x86_64, verify why it was added, now also in OSG, it is a dependency of osg-wn-client
 # TODO: temporary using osg-development, should be removed after 11/5
@@ -46,7 +50,10 @@ RUN yum install -y \
     pcre2 xxhash-libs libzstd libzstd-devel mpich mpich-devel numactl numactl-devel libffi libffi-devel libcurl-devel \
     ftgl gl2ps libGLEW giflib libAfterImage \
     perl perl-autodie perl-Carp perl-constant perl-Data-Dumper perl-Digest perl-Digest-SHA perl-Exporter perl-File-Path perl-File-Temp perl-Getopt-Long perl-libs perl-PathTools perl-Scalar-List-Utils \
-    jq
+    jq htgettoken \
+    globus-gass-copy-progs globus-proxy-utils globus-xio-udt-driver gfal2-plugin-gridftp gfal2-plugin-srm uberftp \
+    fts-client gsi-openssh-clients myproxy voms-clients-cpp stashcp \
+    python-setuptools python2-future python-backports-ssl_match_hostname python2-gfal2-util
 
 # Overriding the default singularity configuration
 ADD shared/singularity.conf /etc/singularity/singularity.conf
