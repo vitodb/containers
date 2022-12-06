@@ -1,7 +1,7 @@
-# Selecting CentOS8 as the base OS
-FROM centos:centos8 
+# Selecting AlmaLinux 8 as the base OS
+FROM almalinux:8
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
-LABEL name="FNAL Worked Node on EL8 with OSG 3.5 Worker Node Client"
+LABEL name="FNAL Worked Node on EL8 with OSG 3.6 Worker Node Client"
 
 # Setting up the HTCondor Madison repository
 # Technically, HTCondor isn't installed but this has been done
@@ -19,8 +19,8 @@ RUN yum install -y wget sed ;\
 # Next setting up EPEL and OSG repositories
 # OSG by default has a YUM  prio of 98
 # Assigning EPEL YUM prio of 99
-RUN yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm ;\
-    yum -y install https://repo.opensciencegrid.org/osg/3.5/osg-3.5-el8-release-latest.rpm \
+RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm ;\
+    yum -y install https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el8-release-latest.rpm \
                    epel-release ;\
     /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo ;\
     echo "exclude=*condor*" >> /etc/yum.repos.d/osg.repo
@@ -35,6 +35,7 @@ RUN yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noar
 #  libcurl-devel [Minerva, K.Herner, RITM1036665]
 #  ftgl gl2ps libGLEW giflib libAfterImage [LArSoft v09_16_00, V. Di Benedetto, RITM1085514]
 #  jq [SBND Mateus F. Carneiro, RITM1235906]
+#  htgettoken [Mu2e, Ray Culbertson, as part of RITM1572512]
 # OSG has only: osg-wn-client redhat-lsb-core singularity
 # removed:  gfal2-plugin-xrootd-2.18.1-2.el7.x86_64, verify why it was added, now in OSG
 # TODO: temporary using osg-development, should be removed after 11/5
@@ -51,7 +52,10 @@ RUN yum install -y  --enablerepo=powertools  --enablerepo=osg --enablerepo=osg-d
     expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel singularity \
     pcre2 xxhash-libs libzstd libzstd-devel mpich mpich-devel numactl numactl-devel libffi libffi-devel libcurl-devel \
     ftgl gl2ps libGLEW giflib libAfterImage \
-    jq
+    jq htgettoken \
+    globus-gass-copy-progs globus-proxy-utils globus-xio-udt-driver gfal2-plugin-gridftp gfal2-plugin-srm uberftp \
+    gsi-openssh-clients myproxy voms-clients-cpp stashcp \
+    python3-setuptools python3-future python3-gfal2-util
 
 
 
