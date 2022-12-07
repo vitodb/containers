@@ -49,15 +49,11 @@ jobs:
         run: |
           echo "DH_LABEL=${{ github.event.client_payload.label }}" >> $GITHUB_ENV
 
-      - name: make date tag
-        id: mkdatetag
-        run: echo "::set-output name=dtag::$(date +%Y%m%d-%H%M)"
-
       - name: add date tag
         continue-on-error: true
         if: ${{ github.event.client_payload.date_tag }}
         run: |
-          echo "DH_LABEL=$DH_LABEL-${{ steps.mkdatetag.outputs.dtag }}" >> $GITHUB_ENV
+          echo "DH_LABEL=$DH_LABEL-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
