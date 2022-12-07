@@ -71,7 +71,7 @@ jobs:
           push: true
           context: worker
           file: worker/fnal-wn-sl7/Dockerfile
-          tags: glideinwms/fnal-wn-sl7:${{env.DH_LABEL}}
+          tags: fermilab/fnal-wn-sl7:${{env.DH_LABEL}}
 
       - name: Build and push EL8
         id: docker_build_el8
@@ -80,7 +80,7 @@ jobs:
           push: true
           context: worker
           file: worker/fnal-wn-el8/Dockerfile
-          tags: glideinwms/fnal-wn-el8:${{env.DH_LABEL}}
+          tags: fermilab/fnal-wn-el8:${{env.DH_LABEL}}
 
       - name: Build and push SL6
         id: docker_build_sl6
