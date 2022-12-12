@@ -50,10 +50,14 @@ RUN yum install -y \
     pcre2 xxhash-libs libzstd libzstd-devel mpich mpich-devel numactl numactl-devel libffi libffi-devel libcurl-devel \
     ftgl gl2ps libGLEW giflib libAfterImage \
     perl perl-autodie perl-Carp perl-constant perl-Data-Dumper perl-Digest perl-Digest-SHA perl-Exporter perl-File-Path perl-File-Temp perl-Getopt-Long perl-libs perl-PathTools perl-Scalar-List-Utils \
-    jq htgettoken \
+    jq \
     globus-gass-copy-progs globus-proxy-utils globus-xio-udt-driver gfal2-plugin-gridftp gfal2-plugin-srm uberftp \
     fts-client gsi-openssh-clients myproxy voms-clients-cpp stashcp \
     python-setuptools python2-future python-backports-ssl_match_hostname python2-gfal2-util
+
+# install htgettoken from osg-development, this repo could have more updated versions that can be useful to have during initial token deployment phase
+RUN yum install -y --enablerepo=osg-development \
+    htgettoken
 
 # Overriding the default singularity configuration
 ADD shared/singularity.conf /etc/singularity/singularity.conf
