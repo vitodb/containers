@@ -49,7 +49,7 @@ RUN yum install -y  --enablerepo=powertools  --enablerepo=osg --enablerepo=osg-d
     osg-ca-certs \
     gcc-c++ libstdc++ xrootd-client-libs xrootd-libs xrootd-client-libs gfal2-plugin-xrootd \
     osg-wn-client krb5-workstation strace redhat-lsb-core mesa-libGLU mesa-libGLU-devel libXmu libXmu-devel cvmfs libXScrnSaver libSM-devel libXpm-devel libgfortran glibc.i686 \
-    expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel singularity \
+    expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel apptainer \
     pcre2 xxhash-libs libzstd libzstd-devel mpich mpich-devel numactl numactl-devel libffi libffi-devel libcurl-devel \
     ftgl gl2ps libGLEW giflib libAfterImage \
     jq htgettoken \
@@ -59,8 +59,8 @@ RUN yum install -y  --enablerepo=powertools  --enablerepo=osg --enablerepo=osg-d
 
 
 
-# Overriding the default singularity configuration
-ADD shared/singularity.conf /etc/singularity/singularity.conf
+# Leaving the default apptainer configuration
+#ADD shared/singularity.conf /etc/singularity/singularity.conf
 
 # SSH config needs to be added
 ADD fnal-wn-el8/ssh_config.el8 /etc/ssh/ssh_config

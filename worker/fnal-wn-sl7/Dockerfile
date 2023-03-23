@@ -47,7 +47,7 @@ RUN yum install -y yum-conf-extras
 #  removed --enablerepo=osg-testing 2020-07-09
 RUN yum install -y \
     osg-ca-certs \
-    gcc-c++ libstdc++ xrootd-client-libs xrootd-libs xrootd-client osg-wn-client krb5-workstation strace redhat-lsb-core mesa-libGLU mesa-libGLU-devel libXmu cvmfs gstreamer-plugins-base libXScrnSaver libSM-devel libXpm-devel libgfortran glibc.i686 libXmu libXmu-devel expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel singularity \
+    gcc-c++ libstdc++ xrootd-client-libs xrootd-libs xrootd-client osg-wn-client krb5-workstation strace redhat-lsb-core mesa-libGLU mesa-libGLU-devel libXmu cvmfs gstreamer-plugins-base libXScrnSaver libSM-devel libXpm-devel libgfortran glibc.i686 libXmu libXmu-devel expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel apptainer \
     pcre2 pcre2-devel xxhash-libs libzstd libzstd-devel mpich mpich-devel numactl numactl-devel libffi libffi-devel libcurl-devel \
     ftgl gl2ps libGLEW giflib libAfterImage \
     perl perl-autodie perl-Carp perl-constant perl-Data-Dumper perl-Digest perl-Digest-SHA perl-Exporter perl-File-Path perl-File-Temp perl-Getopt-Long perl-libs perl-PathTools perl-Scalar-List-Utils \
@@ -60,8 +60,8 @@ RUN yum install -y \
 RUN yum install -y --enablerepo=osg-development \
     htgettoken
 
-# Overriding the default singularity configuration
-ADD shared/singularity.conf /etc/singularity/singularity.conf
+# Leaving the default apptainer configuration
+# ADD shared/singularity.conf /etc/singularity/singularity.conf
 
 # SSH config needs to be added
 ADD fnal-wn-sl7/ssh_config.sl7 /etc/ssh/ssh_config
