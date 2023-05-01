@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 # This workflow can be triggered w/ a dispatch event, e.g.:
 #  curl -X POST -H "Authorization: token $(cat ../token_file)" \
 #    -H "Content-Type: application/json" -H "Accept: application/vnd.github.v3+json" \
@@ -14,7 +17,7 @@ name: Build and Push Docker image for workers (release)
 
 on:
   push:
-    branches: [ main, osg35 ]
+    branches: [main, osg35]
     path:
       - worker/fnal-wn-el8/Dockerfile
       - worker/fnal-wn-sl7/Dockerfile
@@ -92,4 +95,3 @@ jobs:
           context: worker
           file: worker/fnal-wn-sl6/Dockerfile
           tags: glideinwms/fnal-wn-sl6:${{env.DH_LABEL}}
-

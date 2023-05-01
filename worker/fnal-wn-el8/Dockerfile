@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 # Selecting AlmaLinux 8 as the base OS
 FROM almalinux:8
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
@@ -43,7 +46,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
 #        gcc-c++ libstdc++ xrootd-client-libs-4.12.1-1.osg35.el8.x86_64 xrootd-libs-4.12.1-1.osg35.el8.x86_64 xrootd-client-libs-4.12.1-1.osg35.el8.x86_64 gfal2-plugin-xrootd \
 #        osg-wn-client krb5-workstation strace redhat-lsb-core mesa-libGLU mesa-libGLU-devel libXmu cvmfs gstreamer-plugins-base libXScrnSaver libSM-devel libXpm-devel libgfortran glibc.i686 \
 #        libXmu libXmu-devel expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel mpich mpich-devel numactl numactl-devel \
-#        singularity 
+#        singularity
 # TODO: temporary using osg-development to allow to install osg-wn-client, should be removed when the fix is in production
 RUN yum install -y  --enablerepo=powertools  --enablerepo=osg --enablerepo=osg-development \
     osg-ca-certs \
@@ -63,15 +66,15 @@ RUN yum install -y  --enablerepo=powertools  --enablerepo=osg --enablerepo=osg-d
 #ADD shared/singularity.conf /etc/singularity/singularity.conf
 
 # SSH config needs to be added
-ADD fnal-wn-el8/ssh_config.el8 /etc/ssh/ssh_config
+ADD shared/ssh_config /etc/ssh/ssh_config
 
 # Postponing yum clean all to later, after the git installation
 # Skipping additional FermiGrid specific tests:
-# - adding /home/interactive 
+# - adding /home/interactive
 # - adding the tests
 
-# Default entry point 
-CMD ["/bin/bash"] 
+# Default entry point
+CMD ["/bin/bash"]
 
 
 #######################

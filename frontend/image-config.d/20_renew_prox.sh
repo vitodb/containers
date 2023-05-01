@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 # Creating the lock for renewal proxy

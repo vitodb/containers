@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+# File used for sl7, el8 and el9 (sl6 has a different one)
 #	$OpenBSD: ssh_config,v 1.30 2016/02/20 23:06:23 sobrado Exp $
 
 # This is the ssh client system-wide configuration file.  See

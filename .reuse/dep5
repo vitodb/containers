@@ -1,0 +1,14 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: GlideinWMS Containers
+Upstream-Contact: GlideinWMS Team <glideinwms-support@fnal.gov>
+Source: https://github.com/glideinWMS/containers
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
+
+Files: .editorconfig .gitattributes .gitignore .gitmodules .mailmap .pre-commit-config.yaml LICENSE
+Copyright: 2020 Fermi Research Alliance, LLC
+License: Apache-2.0

@@ -1,5 +1,8 @@
-# Selecting SL7 as the base OS 
-FROM scientificlinux/sl:7 
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+# Selecting SL7 as the base OS
+FROM scientificlinux/sl:7
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
 
 # Setting up the HTCondor Madison repository
@@ -18,7 +21,7 @@ RUN yum install -y wget sed ;\
 # Next setting up EPEL and OSG repositories
 # OSG by default has a YUM  prio of 98
 # Assigning EPEL YUM prio of 99
-RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm ;\ 
+RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm ;\
     yum install -y yum-priorities ;\
     yum install -y https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el7-release-latest.rpm ;\
     # /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo ;\
@@ -37,7 +40,7 @@ RUN yum install -y yum-conf-extras
 #  pcre2 xxhash-libs libzstd libzstd-devel [Art v3_06, R.Kutschke, RITM1002405]
 #  libcurl-devel [Minerva, K.Herner, RITM1036665]
 #  ftgl gl2ps libGLEW giflib libAfterImage [LArSoft v09_16_00, V. Di Benedetto, RITM1085514]
-#  perl libraries: perl perl-autodie ...  perl-Scalar-List-Utils [Mu2e S.Soleti R.Kutschke, INC000001118312] 
+#  perl libraries: perl perl-autodie ...  perl-Scalar-List-Utils [Mu2e S.Soleti R.Kutschke, INC000001118312]
 #  jq [SBND Mateus F. Carneiro, RITM1235906]
 #  htgettoken [Mu2e, Ray Culbertson, as part of RITM1572512]
 #  pcre2-devel [Mu2e, Ray Culbertson, RITM1593912]
@@ -64,15 +67,15 @@ RUN yum install -y --enablerepo=osg-development \
 # ADD shared/singularity.conf /etc/singularity/singularity.conf
 
 # SSH config needs to be added
-ADD fnal-wn-sl7/ssh_config.sl7 /etc/ssh/ssh_config
+ADD shared/ssh_config /etc/ssh/ssh_config
 
 # Postponing yum clean all to later, after the git installation
 # Skipping additional FermiGrid specific tests:
-# - adding /home/interactive 
+# - adding /home/interactive
 # - adding the tests
 
-# Default entry point 
-CMD ["/bin/bash"] 
+# Default entry point
+CMD ["/bin/bash"]
 
 
 #######################

@@ -1,13 +1,16 @@
-# Selecting SL6 as the base OS 
-FROM scientificlinux/sl:6 
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+# Selecting SL6 as the base OS
+FROM scientificlinux/sl:6
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
 
-# Setting up the HTCondor Madison repository 
-# Technically, HTCondor isn't installed but this has been done 
-# to keep in sync with other Docker file and keep the source of 
-# the packages consistent 
-# Assigning the repo yum prio of 90 
-# Installing wget to help with repo setup 
+# Setting up the HTCondor Madison repository
+# Technically, HTCondor isn't installed but this has been done
+# to keep in sync with other Docker file and keep the source of
+# the packages consistent
+# Assigning the repo yum prio of 90
+# Installing wget to help with repo setup
 RUN yum install -y wget ;\
     /usr/bin/wget http://research.cs.wisc.edu/htcondor/yum/repo.d/htcondor-stable-rhel6.repo -O /etc/yum.repos.d/condor.repo ;\
     /usr/bin/wget http://research.cs.wisc.edu/htcondor/yum/RPM-GPG-KEY-HTCondor -O /etc/pki/rpm-gpg/RPM-GPG-KEY-HTCondor ;\
@@ -15,21 +18,21 @@ RUN yum install -y wget ;\
     echo "exclude=*.i686" >> /etc/yum.repos.d/condor.repo ;\
     echo "gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-HTCondor" >> /etc/yum.repos.d/condor.repo
 
-# Next setting up EPEL and OSG repositories 
-# OSG by default has a YUM prio of 98 
-# Assigning EPEL YUM prio of 99 
+# Next setting up EPEL and OSG repositories
+# OSG by default has a YUM prio of 98
+# Assigning EPEL YUM prio of 99
 RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm ;\
     rpm -Uvh https://repo.opensciencegrid.org/osg/3.4/osg-3.4-el6-release-latest.rpm ;\
     yum install -y yum-priorities ;\
     /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo
 
-# Installing packages 
-# Singularity version has been explicitly specified to control upgrades 
+# Installing packages
+# Singularity version has been explicitly specified to control upgrades
 # xrootd packages have been version locked as well to control upgrades
 # Added libraries from FNAL requests are labeled with "LIBRARIES (optional comment) [VO, requestor, SNOW req. number]
 #  libffi libffi-devel [DES, M, Paterno, RITM1038430]
 #  libcurl-devel [Minerva, K.Herner, RITM1036665]
- 
+
 # libcurl-devel for Minerva (via K.Herner)
 # Change to make sure that new osg-ca-certs are picked 2020-07-31
 RUN yum install -y \
@@ -48,10 +51,10 @@ ENV UPS_OVERRIDE "-H Linux64bit+2.6-2.12"
 
 # Postponing yum clean all to later, after the git installation
 # Skipping additional FermiGrid specific tests:
-# - adding /home/interactive 
+# - adding /home/interactive
 # - adding the tests
 
-# Default entry point 
+# Default entry point
 CMD ["/bin/bash"]
 
 

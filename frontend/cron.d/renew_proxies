@@ -1,2 +1,3 @@
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
 23 * * * * root [ -f /var/lock/subsys/gwms-renew-proxies ] && sleep $((RANDOM \% 600)) && /usr/libexec/gwms_renew_proxies
-

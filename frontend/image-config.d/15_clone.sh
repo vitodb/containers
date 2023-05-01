@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 # This script clones the Frontend Validation Scripts repos into /opt/.
 # It looks for the repo and branch names into the ENV VARS.
 # The pattern GWMS_FE_VS_REPO_[0-9]+ specifies the repo and
