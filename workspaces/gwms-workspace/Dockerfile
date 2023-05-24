@@ -15,23 +15,21 @@ LABEL name="Base workspace with EL9, OSG 3.6 and base packages required by Glide
 #    echo "exclude=*.i686" >> /etc/yum.repos.d/condor.repo ;\
 #    echo "gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-HTCondor" >> /etc/yum.repos.d/condor.repo
 #    echo "exclude=*condor*" >> /etc/yum.repos.d/osg.repo
-# Installing some system management RPMs/sw needed for containers
-# Installing some base RPMs (gettext is needed by RELEASE, swig and many devel by jsonnet)  
-# Setting up the HTCondor Madison repository
-# Technically, HTCondor isn't installed but this has been done
-# to keep in sync with other Docker file and keep the source of
-# the packages consistent
-# Assigning the repo yum prio of 90
+# Assigning the apel repo prio of 99 to make sure it is after the OSG one (98 by default)
 # Installing wget to help with repo setup
 RUN yum install -y wget sed git yum-utils ;\
     dnf config-manager --set-enabled crb ;\
     dnf install -y epel-release ;\
     /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo ;\
-    yum install -y https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el9-release-latest.rpm ;\
-    yum install -y cronie supervisor ;\
-    /usr/bin/wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py -O /usr/local/bin/systemctl
+    yum install -y https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el9-release-latest.rpm
+
+# Installing some system management RPMs/sw needed for containers (these are not needed for VMs)
+RUN yum install -y cronie supervisor ;\
+    /usr/bin/wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py -O /usr/local/bin/systemctl ;\
     /usr/bin/chmod +x /usr/local/bin/systemctl
-    yum install -y python3 python3-devel python3-cryptography python3-wheel make openssl-devel gcc gcc-c++ rpm-build gettext swig ;\
+
+# Installing some base RPMs (gettext is needed by RELEASE, swig and many devel by jsonnet)
+RUN yum install -y python3 python3-devel python3-cryptography python3-wheel make openssl-devel gcc gcc-c++ rpm-build gettext swig ;\
     
 
 # Packages useful for development and administration
@@ -44,9 +42,9 @@ RUN yum -y install jq apptainer ;\
     
 # Adding unprivileged user
 RUN adduser abc ;\
-    mkdir /home/abc/repos
-    chown abc: /home/abc/repos
-    mkdir /opt/abc ;\
+    mkdir /home/abc/repos && \
+    chown abc: /home/abc/repos ;\
+    mkdir /opt/abc && \
     chown abc: /opt/abc
 
 
