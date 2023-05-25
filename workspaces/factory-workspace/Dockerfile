@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # GWMS Workspace
-FROM fermilab/gwms-workspace
+FROM localhost/gwms-workspace
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
 LABEL name="Workspace with EL9, OSG 3.6 and the GlideinWMS Factory"
 
