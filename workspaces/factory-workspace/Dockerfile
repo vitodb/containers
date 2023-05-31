@@ -9,6 +9,7 @@ LABEL name="Workspace with EL9, OSG 3.6 and the GlideinWMS Factory"
 # See gwms-workspace for the repos setup and base packages
 
 RUN yum -y install --enablerepo=osg-development glideinwms-factory
+RUN rm -f /etc/condor/config.d/00-minicondor
 
 # Clone glideinwms repo in /home/abc/repos
 # links, ... to work from git

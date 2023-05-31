@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # GWMS Workspace
-FROM fermilab/gwms-workspace
+FROM localhost/gwms-workspace
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
 LABEL name="Workspace with EL9, OSG 3.6 and the GlideinWMS VO Frontend"
 
 # See gwms-workspace for the repos setup and base packages
 
 RUN yum -y install --enablerepo=osg-development glideinwms-vofrontend
+RUN rm -f /etc/condor/config.d/00-minicondor
 
 # Clone glideinwms repo in /home/abc/repos
 # links, ... to work from git
