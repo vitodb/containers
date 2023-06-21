@@ -1,19 +1,31 @@
 # SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-FROM localhost/factory-workspace
-LABEL org.opencontainers.image.authors="coimbra@fnal.gov"
+FROM gwmsdeveloper/gwms-workspace
+LABEL org.opencontainers.image.authors="marcom@fnal.gov,coimbra@fnal.gov"
 LABEL name="Devcontainer for the GlideinWMS Factory"
+
+# See gwms-workspace for the repos setup and base packages
+
+# build info
+RUN echo "Source: fermilab/factory-workspace" > /image-source-info.txt
+RUN echo "Timestamp:" `date --utc` | tee /image-build-info.txt
+
+# Install GlideinWMS Factory
+RUN yum -y install --enablerepo=osg-development glideinwms-factory
+RUN rm -f /etc/condor/config.d/00-minicondor
 
 # Install development tools
 RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo ;\
     dnf install -y gh vim zsh sudo psmisc bind-utils mlocate ;\
-    pip3 install debugpy ;\
-    echo 'PROMPT="%F{204}%n%f %F{86}%m%f %F{39}%d%f » "' > /root/.zshrc
+    pip3 install debugpy ;
 
-# Clone glideinwms repo and link to RPM installed files
+#################################
+# Cleaning caches to reduce size of image
+RUN dnf clean all
+
+# Deploy script to link git repo to RPM installed files
 COPY scripts/link-git.sh /opt/GlideinWMS/link-git.sh
-RUN /opt/GlideinWMS/link-git.sh
 
 # Dowload HTCondor tarballs
 RUN pushd /var/lib/gwms-factory/condor ;\
