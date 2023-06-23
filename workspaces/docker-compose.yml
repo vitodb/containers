@@ -1,0 +1,27 @@
+services:
+
+  factory-workspace:
+      image: localhost/factory-workspace:latest
+      volumes:
+        - gwms:/var/lib/gwms-factory/.condor/tokens.d localhost/factory-workspace
+      networks:
+        - gwms
+      hostname: factory-workspace
+
+  frontend-workspace:
+      image: localhost/frontend-workspace:latest
+      volumes:
+        - gwms:/var/lib/gwms-frontend/.condor/tokens.d
+      networks:
+        - gwms
+      hostname: frontend-workspace
+      depends_on:
+        - factory-workspace
+
+volumes:
+  gwms:
+    driver: local
+
+networks:
+  gwms:
+    driver: bridge

@@ -24,8 +24,8 @@ RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.rep
 # Cleaning caches to reduce size of image
 RUN dnf clean all
 
-# Deploy script to link git repo to RPM installed files
-COPY scripts/link-git.sh /opt/GlideinWMS/link-git.sh
+# Deploy utility scripts
+COPY scripts /opt/GlideinWMS/scripts
 
 # Dowload HTCondor tarballs
 RUN pushd /var/lib/gwms-factory/condor ;\
