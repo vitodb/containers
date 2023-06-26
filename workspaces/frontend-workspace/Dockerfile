@@ -32,5 +32,9 @@ COPY scripts /opt/GlideinWMS/scripts
 COPY config/frontend.xml /etc/gwms-frontend/frontend.xml
 RUN chown frontend:frontend /etc/gwms-frontend/frontend.xml
 
+# Add test user
+RUN useradd -m -s /bin/bash testuser
+COPY --chown=testuser:testuser testuser-home /home/testuser/* /home/testuser/
+
 # Default entry point
 CMD ["/bin/bash"]

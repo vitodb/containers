@@ -1,15 +1,19 @@
 services:
 
   factory-workspace:
-      image: localhost/factory-workspace:latest
+      container_name: factory-workspace
+      image: gwmsdeveloper/factory-workspace:latest
       volumes:
-        - gwms:/var/lib/gwms-factory/.condor/tokens.d localhost/factory-workspace
+        - gwms:/var/lib/gwms-factory/.condor/tokens.d
       networks:
         - gwms
       hostname: factory-workspace
+      tty: true
+      stdin_open: true
 
   frontend-workspace:
-      image: localhost/frontend-workspace:latest
+      container_name: frontend-workspace
+      image: gwmsdeveloper/frontend-workspace:latest
       volumes:
         - gwms:/var/lib/gwms-frontend/.condor/tokens.d
       networks:
@@ -17,6 +21,8 @@ services:
       hostname: frontend-workspace
       depends_on:
         - factory-workspace
+      tty: true
+      stdin_open: true
 
 volumes:
   gwms:
