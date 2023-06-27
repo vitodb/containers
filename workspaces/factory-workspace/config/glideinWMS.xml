@@ -1,4 +1,4 @@
-<glidein advertise_delay="5" advertise_with_multiple="False" advertise_with_tcp="False" factory_name="gfactory_service" glidein_name="gfactory_instance" loop_delay="60" restart_attempts="3" restart_interval="1800" schedd_name="factory-devcontainer,schedd_glideins3@factory-devcontainer,schedd_glideins5@factory-devcontainer,schedd_glideins2@factory-devcontainer,schedd_glideins4@factory-devcontainer" factory_versioning="False">
+<glidein advertise_delay="5" advertise_with_multiple="False" advertise_with_tcp="False" factory_name="gfactory_service" glidein_name="gfactory_instance" loop_delay="60" restart_attempts="3" restart_interval="1800" schedd_name="factory-workspace,schedd_glideins3@factory-workspace,schedd_glideins5@factory-workspace,schedd_glideins2@factory-workspace,schedd_glideins4@factory-workspace" factory_versioning="False">
    <log_retention>
       <condor_logs max_days="14.0" max_mbytes="100.0" min_days="3.0"/>
       <job_logs max_days="7.0" max_mbytes="100.0" min_days="3.0"/>
@@ -12,19 +12,19 @@
    <monitor_footer display_txt="" href_link=""/>
    <security key_length="2048" pub_key="RSA" remove_old_cred_age="30" remove_old_cred_freq="24" reuse_oldkey_onstartup_gracetime="900">
       <frontends>
-         <frontend name="vofrontend_service" identity="vofrontend_service@factory-devcontainer">
+         <frontend name="vofrontend_service" identity="vofrontend_service@factory-workspace">
             <security_classes>
                <security_class name="frontend" username="frontend"/>
             </security_classes>
          </frontend>
-         <frontend name="decisionengine_service" identity="decisionengine_service@factory-devcontainer">
+         <frontend name="decisionengine_service" identity="decisionengine_service@factory-workspace">
             <security_classes>
                <security_class name="frontend" username="decisionengine"/>
             </security_classes>
          </frontend>
       </frontends>
    </security>
-   <stage base_dir="/var/lib/gwms-factory/web-area/stage" use_symlink="True" web_base_url="http://factory-devcontainer/factory/stage"/>
+   <stage base_dir="/var/lib/gwms-factory/web-area/stage" use_symlink="True" web_base_url="http://factory-workspace/factory/stage"/>
    <submit base_client_log_dir="/var/log/gwms-factory/client" base_client_proxies_dir="/var/lib/gwms-factory/client-proxies" base_dir="/var/lib/gwms-factory/work-dir" base_log_dir="/var/log/gwms-factory/server"/>
    <attrs>
       <attr name="CONDOR_VERSION" const="False" glidein_publish="False" job_publish="False" parameter="True" publish="True" type="string" value="default"/>
@@ -33,7 +33,7 @@
       <attr name="USE_MATCH_AUTH" const="True" glidein_publish="False" job_publish="False" parameter="True" publish="True" type="string" value="True"/>
    </attrs>
    <entries>
-      <entry name="TEST_ENTRY" enabled="False" gatekeeper="gatekeeper.domain.tld/jobmanager-condor" gridtype="gt2" rsl="(queue=default)(jobtype=single)" schedd_name="schedd_glideins2@factory-devcontainer" verbosity="std" work_dir="OSG">
+      <entry name="TEST_ENTRY" enabled="False" gatekeeper="gatekeeper.domain.tld/jobmanager-condor" gridtype="gt2" rsl="(queue=default)(jobtype=single)" schedd_name="schedd_glideins2@factory-workspace" verbosity="std" work_dir="OSG">
          <config>
             <max_jobs>
                <per_entry held="1000" idle="4000" glideins="10000"/>

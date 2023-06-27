@@ -1,30 +1,42 @@
 # SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-# GWMS Workspace
-FROM localhost/gwms-workspace
-MAINTAINER Marco Mambelli "marcom@fnal.gov"
-LABEL name="Workspace with EL9, OSG 3.6 and the GlideinWMS Factory"
+FROM gwmsdeveloper/gwms-workspace
+LABEL org.opencontainers.image.authors="marcom@fnal.gov,coimbra@fnal.gov"
+LABEL name="Devcontainer for the GlideinWMS Factory"
 
 # See gwms-workspace for the repos setup and base packages
-
-RUN yum -y install --enablerepo=osg-development glideinwms-factory
-RUN rm -f /etc/condor/config.d/00-minicondor
-
-# Clone glideinwms repo in /home/abc/repos
-# links, ... to work from git
-
-# Frontend configuration
-# Setup with standard environment
-
-
-# Default entry point
-CMD ["/bin/bash"]
-
-#################################
-# Cleaning caches to reduce size of image
-RUN yum clean all
 
 # build info
 RUN echo "Source: fermilab/factory-workspace" > /image-source-info.txt
 RUN echo "Timestamp:" `date --utc` | tee /image-build-info.txt
+
+# Install GlideinWMS Factory
+RUN yum -y install --enablerepo=osg-development glideinwms-factory
+RUN rm -f /etc/condor/config.d/00-minicondor
+
+# Install development tools
+RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo ;\
+    dnf install -y gh vim zsh sudo psmisc bind-utils mlocate ;\
+    pip3 install debugpy ;
+
+#################################
+# Cleaning caches to reduce size of image
+RUN dnf clean all
+
+# Deploy utility scripts
+COPY scripts /opt/GlideinWMS/scripts
+
+# Dowload HTCondor tarballs
+RUN pushd /var/lib/gwms-factory/condor ;\
+    wget https://research.cs.wisc.edu/htcondor/tarball/9.0/9.0.0/release/condor-9.0.0-x86_64_CentOS7-stripped.tar.gz ;\
+    tar -xf condor-9.0.0-x86_64_CentOS7-stripped.tar.gz ;\
+    rm -f condor-9.0.0-x86_64_CentOS7-stripped.tar.gz ;\
+    popd
+
+# Copy GlideinWMS Factory configuration
+COPY config/glideinWMS.xml /etc/gwms-factory/glideinWMS.xml
+RUN chown gfactory:gfactory /etc/gwms-factory/glideinWMS.xml
+
+# Default entry point
+CMD ["/bin/bash"]

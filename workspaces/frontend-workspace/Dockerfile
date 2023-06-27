@@ -1,30 +1,40 @@
 # SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-# GWMS Workspace
-FROM localhost/gwms-workspace
-MAINTAINER Marco Mambelli "marcom@fnal.gov"
-LABEL name="Workspace with EL9, OSG 3.6 and the GlideinWMS VO Frontend"
+FROM gwmsdeveloper/gwms-workspace
+LABEL org.opencontainers.image.authors="marcom@fnal.gov,coimbra@fnal.gov"
+LABEL name="Devcontainer for the GlideinWMS Frontend"
 
 # See gwms-workspace for the repos setup and base packages
 
+# build info
+RUN echo "Source: fermilab/frontend-workspace" > /image-source-info.txt
+RUN echo "Timestamp:" `date --utc` | tee /image-build-info.txt
+
+# Install GlideinWMS Frontend
 RUN yum -y install --enablerepo=osg-development glideinwms-vofrontend
 RUN rm -f /etc/condor/config.d/00-minicondor
 
-# Clone glideinwms repo in /home/abc/repos
-# links, ... to work from git
-
-# Frontend configuration
-# Setup with standard environment
-
-
-# Default entry point
-CMD ["/bin/bash"]
+# Install development tools
+RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo ;\
+    dnf install -y gh vim zsh sudo psmisc bind-utils mlocate ;\
+    pip3 install debugpy ;\
+    echo 'PROMPT="%F{204}%n%f %F{86}%m%f %F{39}%d%f » "' > /root/.zshrc
 
 #################################
 # Cleaning caches to reduce size of image
 RUN yum clean all
 
-# build info
-RUN echo "Source: fermilab/frontend-workspace" > /image-source-info.txt
-RUN echo "Timestamp:" `date --utc` | tee /image-build-info.txt
+# Deploy utility scripts
+COPY scripts /opt/GlideinWMS/scripts
+
+# Copy GlideinWMS Frontend configuration
+COPY config/frontend.xml /etc/gwms-frontend/frontend.xml
+RUN chown frontend:frontend /etc/gwms-frontend/frontend.xml
+
+# Add test user
+RUN useradd -m -s /bin/bash testuser
+COPY --chown=testuser:testuser testuser-home /home/testuser/* /home/testuser/
+
+# Default entry point
+CMD ["/bin/bash"]
