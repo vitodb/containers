@@ -40,6 +40,11 @@ RUN yum install -y \
     gcc-c++ libstdc++ xrootd-client-libs-4.11.1-1.osg34.el6.x86_64 xrootd-libs-4.11.1-1.osg34.el6.x86_64 xrootd-client-4.11.1-1.osg34.el6.x86_64 gfal2-plugin-xrootd-2.17.1-1.el6.x86_64 osg-wn-client krb5-workstation strace redhat-lsb-core mesa-libGLU mesa-libGLU-devel libXmu cvmfs gstreamer-plugins-base libXScrnSaver libSM-devel libXpm-devel libgfortran glibc.i686 libXmu libXmu-devel expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel singularity-3.5.3-1.1.osg34.el6.x86_64 \
     libcurl-devel libffi libffi-devel
 
+# Overriding the CA certificates with updated ones
+RUN wget -q -O- https://glideinwms.fnal.gov/downloads/osg-ca-certificates.tar.gz | \
+    tar -xz -C /etc/grid-security/certificates/ --overwrite && \
+    chown root: /etc/grid-security/certificates/*
+
 # Overriding the default singularity configuration
 ADD shared/singularity.conf /etc/singularity/singularity.conf
 
