@@ -48,7 +48,6 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.n
 #        osg-wn-client krb5-workstation strace redhat-lsb-core mesa-libGLU mesa-libGLU-devel libXmu cvmfs gstreamer-plugins-base libXScrnSaver libSM-devel libXpm-devel libgfortran glibc.i686 \
 #        libXmu libXmu-devel expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel mpich mpich-devel numactl numactl-devel \
 #        singularity
-# NOTE: redhat-lsb-core package has been removed as it is not (yet) available for EL9
 RUN yum install -y --enablerepo=crb --enablerepo=osg \
     osg-ca-certs \
     gcc-c++ libstdc++ xrootd-client-libs xrootd-libs xrootd-client-libs gfal2-plugin-xrootd \
@@ -60,7 +59,10 @@ RUN yum install -y --enablerepo=crb --enablerepo=osg \
     globus-gass-copy-progs globus-proxy-utils globus-xio-udt-driver gfal2-plugin-gridftp gfal2-plugin-srm uberftp \
     gsi-openssh-clients myproxy voms-clients-cpp stashcp \
     python3-setuptools python3-future python3-gfal2-util
-
+ 
+# NOTE: redhat-lsb-core package is made available through AlmaLinux Devel repo
+RUN dnf install -y almalinux-release-devel
+RUN dnf install -y redhat-lsb-core
 
 
 # Overriding the default apptainer configuration
