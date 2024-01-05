@@ -8,8 +8,8 @@ help_msg() {
 $0 [options] 
   -h       print this message
   -v       verbose mode
-  -d DIR   GlideinWMS directory (GWMS_DIR)
-  -p PASS  passphrase
+  -d DIR   GlideinWMS directory (GWMS_DIR, Default: /opt/gwms)
+  -p PYVER Python version (Default: 3.9)
   -a       set up fActory
   -r       set up fRontend
 EOF
@@ -23,7 +23,7 @@ do
     in
     h) help_msg; exit 0;;
     v) VERBOSE=yes;;
-    d) GWMS_DIR=$OPTARG;;
+    d) GWMS_DIR=${OPTARG%/};;
     p) PYVER=$OPTARG;;
     a) IS_FACTORY=yes;;
     r) IS_FRONTEND=yes;;
