@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
@@ -6,9 +6,10 @@
 help_msg() {
     cat << EOF
 $0 [options] 
+Link a GlideinWMS RPM installation to a Git repository
   -h       print this message
   -v       verbose mode
-  -d DIR   GlideinWMS directory (GWMS_DIR, Default: /opt/gwms)
+  -d DIR   GlideinWMS directory (GWMS_DIR, Default: /opt/gwms). The repository will be in its ./glideinwms subdirectory
   -p PYVER Python version (Default: 3.9)
   -a       set up fActory
   -r       set up fRontend
@@ -40,22 +41,35 @@ if ! mkdir -p "$GWMS_DIR"; then
     exit 1
 fi
 GWMS_SRC_DIR="$GWMS_DIR"/glideinwms
-if [ ! "$(ls -A "$GWMS_SRC_DIR" 2>/dev/null)" ]; then
+if [[ ! "$(ls -A "$GWMS_SRC_DIR" 2>/dev/null)" ]]; then
     git clone https://github.com/glideinWMS/glideinwms.git "$GWMS_SRC_DIR"
 fi
 
-[ ! "$(ls -A "$GWMS_SRC_DIR" 2>/dev/null)" ] && { echo "Failed to clone GlideinWMS Git repository. Unable to link it."; exit 1; } || true
+[[ ! "$(ls -A "$GWMS_SRC_DIR" 2>/dev/null)" ]] && { echo "Failed to clone GlideinWMS Git repository. Unable to link it."; exit 1; } || true
+
+if [[ -L /usr/lib/python${PYVER}/site-packages/glideinwms ]]; then
+    if [[ "$(cd -P "/usr/lib/python${PYVER}/site-packages/glideinwms" && pwd)" = "$(cd -P "$GWMS_SRC_DIR" && pwd)" ]]
+    then
+        echo "GlideinWMS already using the repository in $GWMS_SRC_DIR. Aborting the new Git setup"
+        exit 0
+    else
+        echo "WARNING: Linking an installation already pointing to a different Git repository. Continuing"
+    fi
+fi
 
 # mv to *_rpm instead of rm -rf
+[[ -n "$VERBOSE" ]] echo "Linking GlideinWMS library to repository in $GWMS_SRC_DIR" || true
 mv /usr/lib/python${PYVER}/site-packages/glideinwms /usr/lib/python${PYVER}/site-packages/glideinwms_rpm
 ln -s "$GWMS_SRC_DIR" /usr/lib/python${PYVER}/site-packages/glideinwms
-if [ -n "$IS_FACTORY" ]; then
+if [[ -n "$IS_FACTORY" ]]; then
+    [[ -n "$VERBOSE" ]] echo "Linking Factory components to Git" || true
     mv /var/lib/gwms-factory/creation /var/lib/gwms-factory/creation_rpm
     mv /var/lib/gwms-factory/web-base /var/lib/gwms-factory/web-base_rpm
     ln -s "$GWMS_SRC_DIR"/creation /var/lib/gwms-factory/creation
     ln -s "$GWMS_SRC_DIR"/creation/web_base /var/lib/gwms-factory/web-base
 fi
-if [ -n "$IS_FRONTEND" ]; then
+if [[ -n "$IS_FRONTEND" ]]; then
+    [[ -n "$VERBOSE" ]] echo "Linking Frontend components to Git" || true
     mv /var/lib/gwms-frontend/creation /var/lib/gwms-frontend/creation_rpm
     mv /var/lib/gwms-frontend/web-base /var/lib/gwms-frontend/web-base_rpm
     ln -s "$GWMS_SRC_DIR"/creation /var/lib/gwms-frontend/creation
@@ -72,7 +86,7 @@ replace() {
 
 pushd /usr/sbin >/dev/null || { echo "ERROR: /usr/sbin not found"; exit 1; }
 
-if [ -n "$IS_FACTORY" ]; then
+if [[ -n "$IS_FACTORY" ]]; then
     for i in \
     checkFactory.py glideFactoryEntryGroup.py glideFactoryEntry.py \
     glideFactory.py manageFactoryDowntimes.py stopFactory.py
@@ -89,7 +103,7 @@ if [ -n "$IS_FACTORY" ]; then
         replace ${i} "$GWMS_SRC_DIR"/creation
     done
 fi
-if [ -n "$IS_FRONTEND" ]; then
+if [[ -n "$IS_FRONTEND" ]]; then
     for i in \
     checkFrontend glideinFrontend stopFrontend
     do
