@@ -17,8 +17,9 @@ name: Build and Push Docker image for workers (release)
 
 on:
   push:
-    branches: [main, osg35]
+    branches: [main ]
     path:
+      - worker/fnal-wn-el9/Dockerfile
       - worker/fnal-wn-el8/Dockerfile
       - worker/fnal-wn-sl7/Dockerfile
       - worker/fnal-wn-sl6/Dockerfile
@@ -84,6 +85,24 @@ jobs:
           context: worker
           file: worker/fnal-wn-el8/Dockerfile
           tags: fermilab/fnal-wn-el8:${{env.DH_LABEL}}
+
+      - name: Build and push EL9
+        id: docker_build_el9
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: worker
+          file: worker/fnal-wn-el9/Dockerfile
+          tags: fermilab/fnal-wn-el9:${{env.DH_LABEL}}
+
+      - name: Build and push SL6
+        id: docker_build_sl6
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: worker
+          file: worker/fnal-wn-sl6/Dockerfile
+          tags: fermilab/fnal-wn-sl6:${{env.DH_LABEL}}
 
       - name: Build and push SL6
         id: docker_build_sl6
