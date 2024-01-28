@@ -68,6 +68,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Build and push SL6
+        id: docker_build_sl6
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          context: worker
+          file: worker/fnal-wn-sl6/Dockerfile
+          tags: fermilab/fnal-wn-sl6:${{env.DH_LABEL}}
+
       - name: Build and push SL7
         id: docker_build_el7
         uses: docker/build-push-action@v5
@@ -94,15 +103,6 @@ jobs:
           context: worker
           file: worker/fnal-wn-el9/Dockerfile
           tags: fermilab/fnal-wn-el9:${{env.DH_LABEL}}
-
-      - name: Build and push SL6
-        id: docker_build_sl6
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          context: worker
-          file: worker/fnal-wn-sl6/Dockerfile
-          tags: fermilab/fnal-wn-sl6:${{env.DH_LABEL}}
 
       - name: Build and push SL6 OSG 3.5
         id: docker_build_sl6_osg35
