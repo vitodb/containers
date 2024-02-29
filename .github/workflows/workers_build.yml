@@ -86,6 +86,15 @@ jobs:
           file: worker/fnal-wn-sl7/Dockerfile
           tags: fermilab/fnal-wn-sl7:${{env.DH_LABEL}}
 
+      - name: Build and push SL7 dev
+        id: docker_build_el7_dev
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          context: worker
+          file: worker/fnal-dev-sl7/Dockerfile
+          tags: fermilab/fnal-dev-sl7:${{env.DH_LABEL}}
+
       - name: Build and push EL8
         id: docker_build_el8
         uses: docker/build-push-action@v5
