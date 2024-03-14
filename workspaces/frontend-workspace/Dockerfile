@@ -31,7 +31,7 @@ COPY shared/config/99-debug.conf /etc/condor/config.d/99-debug.conf
 
 # Add HTCondor files to test user abc
 RUN useradd testuser
-COPY --chown=testuser:testuser frontend-workspace/testuser-home /home/testuser/* /home/testuser/
+COPY --chown=testuser:testuser frontend-workspace/testuser-home/* /home/testuser/
 
 # Default entry point
 CMD ["/bin/bash"]
