@@ -21,3 +21,7 @@ RUN yum -y install fermilab-util_kx509 fermilab-conf_kerberos \
 
 # Default entry point
 CMD ["/bin/bash"]
+
+# build info
+RUN echo "Source: fermilab/fnal-dev-sl7" > /image-source-info.txt
+RUN echo "Timestamp:" `date --utc` | tee /image-build-info.txt
