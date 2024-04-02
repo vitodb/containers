@@ -4,6 +4,7 @@
 # Selecting SL7 as the base OS
 FROM scientificlinux/sl:7
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
+LABEL name="FNAL Worker Node on SL7 with OSG 3.6 Worker Node Client"
 
 # Setting up the HTCondor Madison repository
 # Technically, HTCondor isn't installed but this has been done
@@ -61,8 +62,9 @@ RUN yum install -y \
     fts-client gsi-openssh-clients myproxy voms-clients-cpp stashcp \
     python-setuptools python2-future python-backports-ssl_match_hostname python2-gfal2-util
 
-# Installing apptainer 1.2.5 and not 1.3 from EPEL, to be able to use underlay on EL7 nodes
-RUN rpm -i https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
+# Installing apptainer 1.2.5 (+requirements) and not 1.3 from EPEL, to be able to use underlay on EL7 nodes
+RUN yum install -y fakeroot squashfs-tools squashfuse fuse2fs e2fsprogs fuse-overlayfs fuse3-libs libseccomp && \
+    rpm -i https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
 
 # install htgettoken from osg-development, this repo could have more updated versions that can be useful to have during initial token deployment phase
 RUN yum install -y --enablerepo=osg-development \

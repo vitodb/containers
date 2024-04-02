@@ -4,7 +4,7 @@
 # Selecting AlmaLinux 9 as the base OS
 FROM almalinux:9
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
-LABEL name="FNAL Worked Node on EL9 with OSG 3.6 Worker Node Client"
+LABEL name="FNAL Worker Node on EL9 with OSG 3.6 Worker Node Client"
 
 # ThESE ARE NOT YET AVAILABLE
 # Setting up the HTCondor Madison repository
@@ -61,8 +61,9 @@ RUN yum install -y --enablerepo=crb --enablerepo=osg \
     gsi-openssh-clients myproxy voms-clients-cpp stashcp \
     python3-setuptools python3-future python3-gfal2-util
 
-# Installing apptainer 1.2.5 and not 1.3 from EPEL, to be able to use underlay on EL7 nodes
-RUN rpm -i https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
+# Installing apptainer 1.2.5 (+requirements) and not 1.3 from EPEL, to be able to use underlay on EL7 nodes
+RUN dnf install -y fakeroot squashfs-tools squashfuse e2fsprogs fuse-overlayfs fuse3-libs libseccomp && \
+    rpm -i https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
 
 # NOTE: redhat-lsb-core package is made available through AlmaLinux Devel repo
 RUN dnf install -y almalinux-release-devel

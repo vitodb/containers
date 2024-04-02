@@ -4,7 +4,7 @@
 # Selecting AlmaLinux 8 as the base OS
 FROM almalinux:8
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
-LABEL name="FNAL Worked Node on EL8 with OSG 3.6 Worker Node Client"
+LABEL name="FNAL Worker Node on EL8 with OSG 3.6 Worker Node Client"
 
 # Setting up the HTCondor Madison repository
 # Technically, HTCondor isn't installed but this has been done
@@ -60,8 +60,9 @@ RUN yum install -y  --enablerepo=powertools  --enablerepo=osg --enablerepo=osg-d
     gsi-openssh-clients myproxy voms-clients-cpp stashcp \
     python3-setuptools python3-future python3-gfal2-util
 
-# Installing apptainer 1.2.5 and not 1.3 from EPEL, to be able to use underlay on EL7 nodes
-RUN rpm -i https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
+# Installing apptainer 1.2.5 (+requirements) and not 1.3 from EPEL, to be able to use underlay on EL7 nodes
+RUN yum install -y fakeroot squashfs-tools squashfuse e2fsprogs fuse-overlayfs fuse3-libs libseccomp && \
+    rpm -i https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
 
 # Leaving the default apptainer configuration
 #ADD shared/singularity.conf /etc/singularity/singularity.conf
