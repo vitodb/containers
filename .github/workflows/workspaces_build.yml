@@ -12,8 +12,10 @@
 #  label is used as Docker Hub label instead of "latest"
 #  if date_tag id true a date tag is added to the Docker Hub label (+%Y%m%d-%H%M)
 # -X POST is also optional
+#
+# TODO: use multiple tags (can be a CSV or list)
 
-name: Build and Push Docker image for workers (release)
+name: Build and Push Docker image for dev containers (workspaces)
 
 on:
   push:
@@ -38,6 +40,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: set env date and hash
+        id: setenv_vars
+        shell: bash
+        run: |
+          echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+          echo "GITHUB_HASH=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+          
       - name: set label branch
         id: setlabel_branch
         shell: bash
@@ -81,6 +90,10 @@ jobs:
           context: workspaces
           file: workspaces/gwms-workspace/Dockerfile
           tags: glideinwms/gwms-workspace:${{env.DH_LABEL}}
+          build-args: |
+            BUILD_SHA=$GITHUB_SHA
+            BUILD_HASH=$GITHUB_HASH
+            BUILD_DATE=${{env.BUILD_DATE}}
 
       - name: Build and push ce-workspace
         id: docker_build_ce_workspace
@@ -91,6 +104,10 @@ jobs:
           context: workspaces
           file: workspaces/ce-workspace/Dockerfile
           tags: glideinwms/ce-workspace:${{env.DH_LABEL}}
+          build-args: |
+            BUILD_SHA=$GITHUB_SHA
+            BUILD_HASH=$GITHUB_HASH
+            BUILD_DATE=${{env.BUILD_DATE}}
 
       - name: Build and push factory-workspace
         id: docker_build_factory_workspace
@@ -101,6 +118,10 @@ jobs:
           context: workspaces
           file: workspaces/factory-workspace/Dockerfile
           tags: glideinwms/factory-workspace:${{env.DH_LABEL}}
+          build-args: |
+            BUILD_SHA=$GITHUB_SHA
+            BUILD_HASH=$GITHUB_HASH
+            BUILD_DATE=${{env.BUILD_DATE}}
 
       - name: Build and push frontend-workspace
         id: docker_build_frontend_workspace
@@ -111,3 +132,7 @@ jobs:
           context: workspaces
           file: workspaces/frontend-workspace/Dockerfile
           tags: glideinwms/frontend-workspace:${{env.DH_LABEL}}
+          build-args: |
+            BUILD_SHA=$GITHUB_SHA
+            BUILD_HASH=$GITHUB_HASH
+            BUILD_DATE=${{env.BUILD_DATE}}

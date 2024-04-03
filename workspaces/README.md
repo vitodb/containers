@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# workspaces
+# Workspaces
 
 Workspaces in containers designed for interactive use, inspired by [Alnoda](https://alnoda.org/) and similar projects.
 These are RHEL based containers to provide a consistent development environment for GlideinWMS and Decision Engine.
@@ -12,6 +12,7 @@ for a protected development environment, not for production.
 For production use instead the frontend and factory off the containers root folder.
 
 The current development environment is based on EL9 and Python 3.9.
+Images are multi-platform (linux/amd64, linux/arm64) to allow seamless developmenr also on M1 Macs.
 
 Some notable tools used in these containers:
 
@@ -25,7 +26,8 @@ You can start the GlideinWMS ITB setup with (IMAGE_NAMESPACE is optional, the gl
 you can use local or also a full path like `docker.io/USERNAME/IMAGE`; 
 GMWS_PATH is optional, is created if not existing, and a local volume is used if not passed):
 ```bash
-GMWS_PATH=/root/ws-test/gwms/ IMAGE_NAMESPACE=glideinwms podman-compose up -d
+mkdir /myworkdir/ws-test/gwms
+GMWS_PATH=/myworkdir/ws-test/gwms/ IMAGE_NAMESPACE=glideinwms podman-compose up -d
 ```
 and bring it down with `podman-compose down`.
 
@@ -48,7 +50,25 @@ Other useful commands:
 ```bash
 podman ps -a
 podman images
+podman exec -it ce-workspace.glideinwms.org /root/scripts/startup.sh
+podman exec -it factory-workspace.glideinwms.org /root/scripts/startup.sh
+podman exec -it frontend-workspace.glideinwms.org /root/scripts/startup.sh
+podman exec -it frontend-workspace.glideinwms.org /root/scripts/run-test.sh
+
 podman exec -it ce-workspace.glideinwms.org /bin/bash
 podman exec -it factory-workspace.glideinwms.org /bin/bash
 podman exec -it frontend-workspace.glideinwms.org /bin/bash
+```
+
+## Troubleshooting
+
+Sometimes old images are picked instead of downloading from Docker Hub.
+You need to cleanup to download the new images:
+```bash
+# Cleanup all running containers
+podman rm $(podman stop $(podman ps -q))
+# To cleanup old images
+podman image list
+podman image rm $(podman image list -q)
+# Some may need to be removed with -f
 ```
