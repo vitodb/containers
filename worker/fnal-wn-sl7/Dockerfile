@@ -63,8 +63,7 @@ RUN yum install -y \
     python-setuptools python2-future python-backports-ssl_match_hostname python2-gfal2-util
 
 # Installing apptainer 1.2.5 (+requirements) and not 1.3 from EPEL, to be able to use underlay on EL7 nodes
-RUN yum install -y fakeroot squashfs-tools squashfuse fuse2fs e2fsprogs fuse-overlayfs fuse3-libs libseccomp && \
-    rpm -i https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
+RUN yum install -y https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
 
 # install htgettoken from osg-development, this repo could have more updated versions that can be useful to have during initial token deployment phase
 RUN yum install -y --enablerepo=osg-development \
