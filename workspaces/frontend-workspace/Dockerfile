@@ -8,17 +8,27 @@ FROM $IMAGE_NAMESPACE/gwms-workspace:$GWMS_VERSION
 # NOTE: if you need GWMS_VERSION after FROM, you need to repeat it
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
+ARG BUILD_VERSION=dev
+ARG BUILD_REF
+ARG BUILD_HASH
 ARG BUILD_SHA
 ARG BUILD_DATE
+# MAINTAINER is deprecated but it is needed to set Author in the image attributes
+MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
 LABEL name="Devcontainer for the GlideinWMS Frontend on EL7/9"
 LABEL org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
+      org.opencontainers.image.title="GWMS Frontend Workspace" \
+      org.opencontainers.image.description="Devcontainer for the GlideinWMS Frontend on EL7/9" \
       org.opencontainers.image.url="https://glideinwms.fnal.gov/" \
       org.opencontainers.image.documentation="https://glideinwms.fnal.gov/" \
       org.opencontainers.image.source="https://github.com/glideinWMS/containers/tree/main/workspaces" \
       org.opencontainers.image.vendor="The GlideinWMS Team" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.licenses="$BUILD_SHA" \
+      org.opencontainers.image.revision="$BUILD_HASH" \
+      org.opencontainers.image.ref.name="$BUILD_REF" \
       org.opencontainers.image.created="$BUILD_DATE"
+# Declaring ports: webserver, htcondor(shared port)
+EXPOSE 80 9618
 
 RUN echo "Building Frontend dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for $TARGETPLATFORM"
 

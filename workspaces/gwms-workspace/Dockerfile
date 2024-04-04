@@ -5,16 +5,24 @@
 FROM almalinux:9
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
+ARG BUILD_VERSION=dev
+ARG BUILD_REF
+ARG BUILD_HASH
 ARG BUILD_SHA
 ARG BUILD_DATE
+# MAINTAINER is deprecated but it is needed to set Author in the image attributes
+MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
 LABEL name="Base workspace with EL9, OSG 3.6 and base packages required by GlideinWMS and HEPCloud"
 LABEL org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
+      org.opencontainers.image.title="GWMS Base Workspace" \
+      org.opencontainers.image.description="Base workspace with EL9, OSG 3.6 and base packages required by GlideinWMS and HEPCloud" \
       org.opencontainers.image.url="https://glideinwms.fnal.gov/" \
       org.opencontainers.image.documentation="https://glideinwms.fnal.gov/" \
       org.opencontainers.image.source="https://github.com/glideinWMS/containers/tree/main/workspaces" \
       org.opencontainers.image.vendor="The GlideinWMS Team" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.licenses="$BUILD_SHA" \
+      org.opencontainers.image.revision="$BUILD_HASH" \
+      org.opencontainers.image.ref.name="$BUILD_REF" \
       org.opencontainers.image.created="$BUILD_DATE"
 
 RUN echo "Building GWMS base dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for $TARGETPLATFORM"
@@ -44,10 +52,9 @@ RUN dnf install -y cronie supervisor initscripts;\
     /usr/bin/chmod +x /usr/local/bin/systemctl
 
 # Installing some base RPMs (gettext is needed by RELEASE, swig and many devel by jsonnet)
-RUN dnf install -y python3 python3-devel python3-cryptography python3-wheel make openssl-devel gcc gcc-c++ rpm-build gettext swig ;
-    
 # Install development tools
-RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo ;\
+RUN dnf install -y python3 python3-devel python3-cryptography python3-wheel make openssl-devel gcc gcc-c++ rpm-build gettext swig ;\
+    dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo ;\
     dnf install -y gh jq vim zsh sudo psmisc bind-utils mlocate ;\
     pip3 install debugpy ;
 

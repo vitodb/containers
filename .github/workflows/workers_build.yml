@@ -18,11 +18,7 @@ name: Build and Push Docker image for workers (release)
 on:
   push:
     branches: [main ]
-    path:
-      - worker/fnal-wn-el9/Dockerfile
-      - worker/fnal-wn-el8/Dockerfile
-      - worker/fnal-wn-sl7/Dockerfile
-      - worker/fnal-wn-sl6/Dockerfile
+    paths: ['worker/**']
   repository_dispatch:
     types:
       - worker-build
