@@ -70,6 +70,14 @@ jobs:
         run: |
           echo "DH_LABEL=$DH_LABEL-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
 
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+        with:
+          key: gwms-docker-cache-{hash}
+          restore-keys: |
+            gwms-docker-cache-
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -92,9 +100,9 @@ jobs:
           file: workspaces/gwms-workspace/Dockerfile
           tags: glideinwms/gwms-workspace:${{env.DH_LABEL}}
           build-args: |
-            BUILD_SHA=$GITHUB_SHA
-            BUILD_HASH=$GITHUB_HASH
-            BUILD_REF=$GITHUB_REF
+            BUILD_SHA=${{env.GITHUB_SHA}}
+            BUILD_HASH=${{env.GITHUB_HASH}}
+            BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
 
       - name: Build and push ce-workspace
@@ -107,9 +115,9 @@ jobs:
           file: workspaces/ce-workspace/Dockerfile
           tags: glideinwms/ce-workspace:${{env.DH_LABEL}}
           build-args: |
-            BUILD_SHA=$GITHUB_SHA
-            BUILD_HASH=$GITHUB_HASH
-            BUILD_REF=$GITHUB_REF
+            BUILD_SHA=${{env.GITHUB_SHA}}
+            BUILD_HASH=${{env.GITHUB_HASH}}
+            BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
 
       - name: Build and push factory-workspace
@@ -122,9 +130,9 @@ jobs:
           file: workspaces/factory-workspace/Dockerfile
           tags: glideinwms/factory-workspace:${{env.DH_LABEL}}
           build-args: |
-            BUILD_SHA=$GITHUB_SHA
-            BUILD_HASH=$GITHUB_HASH
-            BUILD_REF=$GITHUB_REF
+            BUILD_SHA=${{env.GITHUB_SHA}}
+            BUILD_HASH=${{env.GITHUB_HASH}}
+            BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
 
       - name: Build and push frontend-workspace
@@ -137,7 +145,7 @@ jobs:
           file: workspaces/frontend-workspace/Dockerfile
           tags: glideinwms/frontend-workspace:${{env.DH_LABEL}}
           build-args: |
-            BUILD_SHA=$GITHUB_SHA
-            BUILD_HASH=$GITHUB_HASH
-            BUILD_REF=$GITHUB_REF            
+            BUILD_SHA=${{env.GITHUB_SHA}}
+            BUILD_HASH=${{env.GITHUB_HASH}}
+            BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}

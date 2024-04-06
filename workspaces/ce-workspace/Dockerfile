@@ -12,8 +12,8 @@ ARG BUILD_SHA
 ARG BUILD_DATE
 # MAINTAINER is deprecated but it is needed to set Author in the image attributes
 MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
-LABEL name="Devcontainer for an EL9 HTCondorCE and worker to be used for GlideinWMS testing"
-LABEL org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
+LABEL name="Devcontainer for an EL9 HTCondorCE and worker to be used for GlideinWMS testing" \
+      org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
       org.opencontainers.image.title="All-in-one HTCondorCE Workspace" \
       org.opencontainers.image.description="Devcontainer for an EL9 HTCondorCE and worker to be used for GlideinWMS testing" \
       org.opencontainers.image.url="https://glideinwms.fnal.gov/" \
@@ -38,6 +38,10 @@ RUN dnf -y install htcondor-ce-condor
 RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo ;\
     dnf install -y gh vim zsh sudo psmisc bind-utils mlocate ;\
     pip3 install debugpy ;
+
+# This must be after all dnf/yum and pip commands
+# Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
+RUN rm -rf /var/cache/yum/* /var/cache/dnf/* /root/.cache/pip/*
 
 # Deploy utility scripts
 COPY ce-workspace/scripts /root/scripts

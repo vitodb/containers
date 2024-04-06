@@ -15,8 +15,8 @@ ARG BUILD_SHA
 ARG BUILD_DATE
 # MAINTAINER is deprecated but it is needed to set Author in the image attributes
 MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
-LABEL name="Devcontainer for the GlideinWMS Factory on EL7/9"
-LABEL org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
+LABEL name="Devcontainer for the GlideinWMS Factory on EL7/9" \
+      org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
       org.opencontainers.image.title="GWMS Factory Workspace" \
       org.opencontainers.image.description="Devcontainer for the GlideinWMS Factory on EL7/9" \
       org.opencontainers.image.url="https://glideinwms.fnal.gov/" \
@@ -38,9 +38,9 @@ RUN echo "Building Factory dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM,
 RUN yum -y install --enablerepo=osg-development glideinwms-factory
 RUN rm -f /etc/condor/config.d/00-minicondor
 
-#################################
-# Cleaning caches to reduce size of image
-RUN yum clean all
+# This must be after all dnf/yum and pip commands
+# Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
+RUN rm -rf /var/cache/yum/* /var/cache/dnf/* /root/.cache/pip/*
 
 # Deploy utility scripts
 COPY shared/scripts /root/scripts

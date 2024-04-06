@@ -12,8 +12,8 @@ ARG BUILD_SHA
 ARG BUILD_DATE
 # MAINTAINER is deprecated but it is needed to set Author in the image attributes
 MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
-LABEL name="Base workspace with EL9, OSG 3.6 and base packages required by GlideinWMS and HEPCloud"
-LABEL org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
+LABEL name="Base workspace with EL9, OSG 3.6 and base packages required by GlideinWMS and HEPCloud" \
+      org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
       org.opencontainers.image.title="GWMS Base Workspace" \
       org.opencontainers.image.description="Base workspace with EL9, OSG 3.6 and base packages required by GlideinWMS and HEPCloud" \
       org.opencontainers.image.url="https://glideinwms.fnal.gov/" \
@@ -75,6 +75,15 @@ RUN dnf -y install krb5-devel ;\
     git clone https://github.com/fermitools/htgettoken.git /opt/htgettoken; \
     pip install /opt/htgettoken/
     
+# osg-wn-client already installed and osg-ca-certs is a dependency. Should CRLs (.r0) be removed?
+#RUN yum -y install osg-ca-certs osg-wn-client \
+#    && rm -f /etc/grid-security/certificates/*.r0
+
+# Postponing dnf/yum/pip cleaning to later, to leave caches for next steps
+# This must be after all dnf/yum and pip commands
+# Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
+# RUN rm -rf /var/cache/yum/* /var/cache/dnf/* /root/.cache/pip/*
+
 # Adding unprivileged user
 RUN adduser abc ;\
     mkdir /home/abc/repos && \
@@ -89,26 +98,6 @@ COPY gwms-workspace/secrets /opt/localgwms/secrets
 # Should ssh be enabled/installed?
 # SSH config needs to be added
 #ADD shared/ssh_config /etc/ssh/ssh_config
-
-# Postponing yum clean all to later, after the git installation
-# Skipping additional FermiGrid specific tests:
-# - adding /home/interactive
-# - adding the tests
-
-# Default entry point
-CMD ["/bin/bash"]
-
-
-#######################
-# Parts added
-
-# osg-wn-client already installed and osg-ca-certs is a dependency. Should CRLs (.r0) be removed?
-#RUN yum -y install osg-ca-certs osg-wn-client \
-#    && rm -f /etc/grid-security/certificates/*.r0
-
-#################################
-# Cleaning caches to reduce size of image
-RUN dnf clean all
 
 # GWMS and OSG suggested mount points
 RUN mkdir -p /opt/gwms ; \
@@ -126,6 +115,12 @@ RUN mkdir -p /opt/gwms ; \
     ; do \
         mkdir -p $MNTPOINT ; \
     done
+
+# Default entry point
+CMD ["/bin/bash"]
+
+# Optional health check (startup will add health check after setup completes)
+HEALTHCHECK --interval=5m CMD [ ! -f /healthcheck.sh ] && exit 0 || ./healthcheck.sh
 
 # build info
 RUN echo "Source: fermilab/gwms-workspace" > /image-source-info.txt

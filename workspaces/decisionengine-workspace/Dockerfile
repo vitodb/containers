@@ -13,8 +13,8 @@ ARG BUILD_SHA
 ARG BUILD_DATE
 # MAINTAINER is deprecated but it is needed to set Author in the image attributes
 MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
-LABEL name="Workspace with EL9, OSG 3.6 and the HEPCloud Decision Engine"
-LABEL org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
+LABEL name="Workspace with EL9, OSG 3.6 and the HEPCloud Decision Engine" \
+      org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
       org.opencontainers.image.title="HEPCloud Decision Engine Workspace" \
       org.opencontainers.image.description="Workspace with EL9, OSG 3.6 and the HEPCloud Decision Engine" \
       org.opencontainers.image.url="https://hepcloud.github.io/" \
@@ -83,9 +83,9 @@ exit
 # Default entry point
 CMD ["/bin/bash"]
 
-#################################
-# Cleaning caches to reduce size of image
-RUN yum clean all
+# This must be after all dnf/yum and pip commands
+# Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
+RUN rm -rf /var/cache/yum/* /var/cache/dnf/* /root/.cache/pip/*
 
 # build info
 RUN echo "Source: $IMAGE_NAMESPACE/decisonengine-workspace" > /image-source-info.txt
