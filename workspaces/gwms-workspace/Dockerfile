@@ -38,30 +38,28 @@ RUN echo "Building GWMS base dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFOR
 #    echo "exclude=*condor*" >> /etc/yum.repos.d/osg.repo
 # Assigning the apel repo prio of 99 to make sure it is after the OSG one (98 by default)
 # Installing wget to help with repo setup
-RUN dnf install -y wget sed git yum-utils ;\
-    dnf config-manager --set-enabled crb ;\
-    dnf install -y epel-release ;\
-    /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo ;\
-    dnf install -y https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el9-release-latest.rpm ;\
+RUN dnf install -y epel-release wget sed git yum-utils \
+    https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el9-release-latest.rpm && \
+    dnf config-manager --set-enabled crb && \
+    /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo && \
     sed -i 's/\$basearch/x86_64/g' /etc/yum.repos.d/osg*
     # TODO: remove the sed command above when OSG supports aarch64
 
 # Installing some system management RPMs/sw needed for containers (these are not needed for VMs)
-RUN dnf install -y cronie supervisor initscripts;\
+RUN dnf install -y cronie supervisor initscripts ;\
     /usr/bin/wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py -O /usr/local/bin/systemctl ;\
     /usr/bin/chmod +x /usr/local/bin/systemctl
 
 # Installing some base RPMs (gettext is needed by RELEASE, swig and many devel by jsonnet)
 # Install development tools
-RUN dnf install -y python3 python3-devel python3-cryptography python3-wheel make openssl-devel gcc gcc-c++ rpm-build gettext swig ;\
-    dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo ;\
-    dnf install -y gh jq vim zsh sudo psmisc bind-utils mlocate ;\
+RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+    dnf install -y python3 python3-devel python3-cryptography python3-wheel make openssl-devel gcc gcc-c++ rpm-build gettext swig \
+    gh jq vim zsh sudo psmisc bind-utils mlocate ;\
     pip3 install debugpy ;
 
 # Packages useful for development and administration
 # Common packages for all GlideinWMS/HEPCloud software
-RUN dnf -y install apptainer ;\
-    dnf -y install python3-rrdtool osg-ca-certs ;
+RUN dnf -y install apptainer python3-rrdtool osg-ca-certs
     # NOTE: .bash_aliases doesn't seem to be compatible with ALMA Linux 9
     #/usr/bin/curl -L -o ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases 2>/dev/null && . ~/.bash_aliases && aliases-update ;
 
@@ -72,7 +70,7 @@ RUN curl -fsSL https://get.htcondor.org | /bin/bash -s -- --no-dry-run
 # Installing htgettoken from source
 # NOTE: htgettoken is not available in OSG 3.6 for EL9
 RUN dnf -y install krb5-devel ;\
-    git clone https://github.com/fermitools/htgettoken.git /opt/htgettoken; \
+    git clone https://github.com/fermitools/htgettoken.git /opt/htgettoken && \
     pip install /opt/htgettoken/
     
 # osg-wn-client already installed and osg-ca-certs is a dependency. Should CRLs (.r0) be removed?
@@ -120,7 +118,7 @@ RUN mkdir -p /opt/gwms ; \
 CMD ["/bin/bash"]
 
 # Optional health check (startup will add health check after setup completes)
-HEALTHCHECK --interval=5m CMD [ ! -f /healthcheck.sh ] && exit 0 || ./healthcheck.sh
+#HEALTHCHECK --interval=5m CMD [ ! -f /healthcheck.sh ] && exit 0 || ./healthcheck.sh
 
 # build info
 RUN echo "Source: fermilab/gwms-workspace" > /image-source-info.txt
