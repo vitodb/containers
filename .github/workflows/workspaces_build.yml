@@ -104,6 +104,8 @@ jobs:
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
+          #cache-from: type=gha
+          #cache-to: type=gha,mode=max
 
       - name: Build and push ce-workspace
         id: docker_build_ce_workspace
