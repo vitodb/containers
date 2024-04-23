@@ -59,9 +59,8 @@ RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.rep
 
 # Packages useful for development and administration
 # Common packages for all GlideinWMS/HEPCloud software
-RUN dnf -y install apptainer python3-rrdtool osg-ca-certs
-    # NOTE: .bash_aliases doesn't seem to be compatible with ALMA Linux 9
-    #/usr/bin/curl -L -o ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases 2>/dev/null && . ~/.bash_aliases && aliases-update ;
+RUN dnf -y install apptainer python3-rrdtool osg-ca-certs ;\
+    /usr/bin/curl -L -o ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases 2>/dev/null && . ~/.bash_aliases && aliases-update
 
 # Installing HTCondor
 # NOTE: OSG repos do not provide noarch HTCondor RPMs. Using https://get.htcondor.org
