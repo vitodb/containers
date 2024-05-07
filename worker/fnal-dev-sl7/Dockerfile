@@ -14,7 +14,7 @@ RUN yum -y install asciidoc autoconf automake bzip2-devel fontconfig-devel freet
     java-latest-openjdk-devel \
     mesa-dri-drivers
 
-RUN yum -y install python-six emacs vim nano screen \
+RUN yum -y install python-six emacs vim nano screen cvs \
     && yum -y clean all
 
 RUN yum -y install yum-conf-context-fermilab.noarch
