@@ -12,6 +12,12 @@
 #  label is used as Docker Hub label instead of "latest"
 #  if date_tag id true a date tag is added to the Docker Hub label (+%Y%m%d-%H%M)
 # -X POST is also optional
+#
+# This workflow builds FNAL worker nodes images each time there is a change in the main branch
+# and by default tags them as ":devel", the unstable/testing images. To trigger a build tagged
+# as ":latest", the stable image series, you can use a dispatch (see above) with 
+#    -d '{"event_type":"worker-build", "client_payload": {"label":"latest", "date_tag":false}}'
+# or you can push a tag with a name starting with "latest", e.g. git tag latest.240510
 
 name: Build and Push Docker image for workers (release)
 
