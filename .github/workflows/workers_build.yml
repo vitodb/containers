@@ -24,7 +24,7 @@ on:
       - worker-build
 
 env:
-  DH_LABEL: latest
+  DH_LABEL: devel
   OSG_VERSION: NO
 
 jobs:
