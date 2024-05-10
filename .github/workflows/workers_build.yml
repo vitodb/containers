@@ -17,7 +17,8 @@ name: Build and Push Docker image for workers (release)
 
 on:
   push:
-    branches: [main ]
+    branches: [main]
+    tags: [latest*]
     paths: ['worker/**']
   repository_dispatch:
     types:
@@ -40,6 +41,14 @@ jobs:
           if [[ ${GITHUB_REF##*/} = osg* ]]; then
             echo "DH_LABEL=${GITHUB_REF##*/}" >> $GITHUB_ENV
             echo "OSG_VERISON=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          fi
+
+      - name: set label tag latest
+        id: setlabel_tag_latest
+        shell: bash
+        run: |
+          if [[ ${GITHUB_REF##*/} = latest* ]]; then
+            echo "DH_LABEL=latest" >> $GITHUB_ENV
           fi
 
       - name: set label from parameter
