@@ -36,7 +36,7 @@ RUN echo "Building GWMS base dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFOR
 #    echo "exclude=*.i686" >> /etc/yum.repos.d/condor.repo ;\
 #    echo "gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-HTCondor" >> /etc/yum.repos.d/condor.repo
 #    echo "exclude=*condor*" >> /etc/yum.repos.d/osg.repo
-# Assigning the apel repo prio of 99 to make sure it is after the OSG one (98 by default)
+# Assigning the epel repo prio of 99 to make sure it is after the OSG one (98 by default)
 # Installing wget to help with repo setup
 RUN dnf install -y epel-release wget sed git yum-utils \
     https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el9-release-latest.rpm && \
