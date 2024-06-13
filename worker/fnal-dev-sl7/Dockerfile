@@ -11,11 +11,12 @@ RUN yum -y install asciidoc autoconf automake bzip2-devel fontconfig-devel freet
     libuuid-devel libxkbcommon-devel libxkbcommon-x11-devel lz4-devel ncurses-devel openldap-devel perl-DBD-SQLite perl-ExtUtils-MakeMaker readline-devel \
     subversion swig tcl-devel texinfo tk-devel xcb-util-image-devel xcb-util-keysyms-devel xcb-util-renderutil-devel xcb-util-wm-devel xmlto xxhash-devel zstd \
     gtk2-devel motif-devel postgresql-devel libpq-devel sqlite-devel \
+    python3-devel python-six emacs vim nano screen cvs htop curl \
+    autogen bison cmake3 gunzip hwloc-devel patchelf ninja-build csh tcsh zsh \
     java-latest-openjdk-devel \
     mesa-dri-drivers
 
-RUN yum -y install python-six emacs vim nano screen cvs htop curl
-
+# Packages requiring additional repos
 RUN curl -sSf 'https://packagecloud.io/install/repositories/github/git-lfs/config_file.repo?os=centos&dist=7&source=script' > /etc/yum.repos.d/github_git-lfs.repo
 RUN yum -y install yum-conf-context-fermilab.noarch
 RUN yum -y install fermilab-util_kx509 fermilab-conf_kerberos \
