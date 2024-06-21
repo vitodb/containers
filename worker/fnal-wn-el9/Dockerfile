@@ -59,7 +59,7 @@ RUN yum install -y --enablerepo=crb --enablerepo=osg \
     jq htgettoken bzip2 \
     globus-gass-copy-progs globus-proxy-utils globus-xio-udt-driver gfal2-plugin-gridftp gfal2-plugin-srm uberftp \
     gsi-openssh-clients myproxy voms-clients-cpp stashcp \
-    python3-setuptools python3-future python3-gfal2-util
+    python3-setuptools python3-future python3-gfal2-util python-unversioned-command
 
 # Installing apptainer 1.2.5 (+requirements) and not 1.3 from EPEL, to be able to use underlay on EL7 nodes
 RUN dnf install -y https://github.com/apptainer/apptainer/releases/download/v1.2.5/apptainer-1.2.5-1.x86_64.rpm
