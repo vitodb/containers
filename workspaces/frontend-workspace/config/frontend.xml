@@ -43,7 +43,7 @@
    <stage base_dir="/var/lib/gwms-frontend/web-area/stage" use_symlink="True" web_base_url="http://frontend-workspace.glideinwms.org/vofrontend/stage"/>
    <work base_dir="/var/lib/gwms-frontend/vofrontend" base_log_dir="/var/log/gwms-frontend"/>
    <attrs>
-      <attr name="ALL_DEBUG" glidein_publish="True" job_publish="True" parameter="True" type="expr" value="D_SECURITY,D_FULLDEBUG"/>
+      <attr name="ALL_DEBUG" glidein_publish="True" job_publish="True" parameter="True" type="string" value="D_SECURITY,D_FULLDEBUG"/>
       <attr name="GLIDEIN_DEBUG_OUTPUT" glidein_publish="True" job_publish="True" parameter="False" type="string" value="True"/>
        <!-- Consider also nowait,nocleanup as GLIDEIN_DEBUG_OPTIONS -->
       <attr name="GLIDEIN_DEBUG_OPTIONS" glidein_publish="True" job_publish="True" parameter="False" type="string" value="userjob"/>
