@@ -89,6 +89,7 @@ jobs:
           tags: fermilab/fnal-wn-sl6:${{env.DH_LABEL}}
 
       - name: Build and push SL7
+        if: ${{ false }} # temporary disable this job
         id: docker_build_el7
         uses: docker/build-push-action@v5
         with:
@@ -98,6 +99,7 @@ jobs:
           tags: fermilab/fnal-wn-sl7:${{env.DH_LABEL}}
 
       - name: Build and push SL7 dev
+        if: ${{ false }} # temporary disable this job
         id: docker_build_el7_dev
         uses: docker/build-push-action@v5
         with:
