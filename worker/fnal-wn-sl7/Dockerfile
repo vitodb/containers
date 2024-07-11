@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Selecting SL7 as the base OS
-FROM scientificlinux/sl:7
+FROM fermilab/base-sl7
 MAINTAINER Marco Mambelli "marcom@fnal.gov"
 LABEL name="FNAL Worker Node on SL7 with OSG 3.6 Worker Node Client"
 
