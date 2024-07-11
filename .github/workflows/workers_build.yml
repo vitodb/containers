@@ -97,7 +97,7 @@ jobs:
           file: worker/base-sl7/Dockerfile
           tags: fermilab/base-sl7:${{env.DH_LABEL}}
 
-       - name: Build and push SL7
+      - name: Build and push SL7
         id: docker_build_el7
         uses: docker/build-push-action@v5
         with:
