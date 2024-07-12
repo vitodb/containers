@@ -18,7 +18,7 @@ RUN yum -y install asciidoc autoconf automake bzip2-devel fontconfig-devel freet
 
 # Packages requiring additional repos
 RUN curl -sSf 'https://packagecloud.io/install/repositories/github/git-lfs/config_file.repo?os=centos&dist=7&source=script' > /etc/yum.repos.d/github_git-lfs.repo
-RUN yum -y install yum-conf-context-fermilab.noarch
+# Installed in sl7-base  RUN yum -y install yum-conf-context-fermilab.noarch
 RUN yum -y install fermilab-util_kx509 fermilab-conf_kerberos \
     git-lfs \
     && yum -y clean all
