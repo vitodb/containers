@@ -5,7 +5,7 @@
 #  curl -X POST -H "Authorization: token $(cat ../token_file)" \
 #    -H "Content-Type: application/json" -H "Accept: application/vnd.github.v3+json" \
 #    https://api.github.com/repos/glideinwms/containers/dispatches \
-#    -d '{"event_type":"workspaces-build", "client_payload": {"label":"latest", "date_tag":true}}'
+#    -d '{"event_type":"workspaces-sl7-build", "client_payload": {"label":"latest", "date_tag":true}}'
 # A valid GitHub token must be saved in the file (so that is presented in the authorization)
 # otherwise a misleading "Not Found" message is returned. No reply is provided for successful posts.
 # The client_payload label and date_tag are optional
@@ -13,20 +13,22 @@
 #  if date_tag id true a date tag is added to the Docker Hub label (+%Y%m%d-%H%M)
 # -X POST is also optional
 #
+# You can use also the gh cli:
+# jq -n '{"event_type":"workspaces-sl7-build", "client_payload": {"label":"latest", "date_tag":true}}' |  \
+#  gh api repos/glideinwms/containers/dispatches --input -
 # TODO: reduce run times, these allow filters at the job level:
 #       https://github.com/tj-actions/changed-files
 #       https://github.com/dorny/paths-filter
 
-name: Build and Push Workspaces
+name: Build and Push SL7 Workspaces
 
 on:
-# Temporary disable automatic build to allow SL7 tests
-#  push:
-#    branches: [main ]
-#    paths: ['workspaces/**']
-#  pull_request:
-#    branches: [main ]
-#    paths: ['workspaces/**']
+  push:
+    branches: [main ]
+    paths: ['workspaces/gwms-workspace/Dockerfile.sl7']
+  pull_request:
+    branches: [main ]
+    paths: ['workspaces/gwms-workspace/Dockerfile.sl7']
   workflow_dispatch:
     inputs:
       date_tag:
@@ -40,7 +42,7 @@ on:
         type: string
   repository_dispatch:
     types:
-      - workspaces-build
+      - workspaces-sl7-build
 
 env:
   DH_LABEL: latest
@@ -97,8 +99,9 @@ jobs:
           restore-keys: |
             gwms-docker-cache-
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      # SL7 is only available for amd64
+      #- name: Set up QEMU
+      #  uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -109,68 +112,68 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push gwms-workspace
-        id: docker_build_gwms_workspace
+      - name: Build and push gwms-workspace SL7
+        id: docker_build_gwms_workspace_sl7
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          #platforms: linux/amd64
           context: workspaces
-          file: workspaces/gwms-workspace/Dockerfile
-          tags: glideinwms/gwms-workspace:${{env.DH_LABEL}}
+          file: workspaces/gwms-workspace/Dockerfile.sl7
+          tags: glideinwms/gwms-workspace:sl7_${{env.DH_LABEL}}
           build-args: |
             BUILD_SHA=${{env.GITHUB_SHA}}
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
-            GWMS_VERSION=${{env.DH_LABEL}}
+            GWMS_VERSION=sl7_${{env.DH_LABEL}}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
 
-      - name: Build and push ce-workspace
+      - name: Build and push ce-workspace SL7
         id: docker_build_ce_workspace
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          #platforms: linux/amd64
           context: workspaces
           file: workspaces/ce-workspace/Dockerfile
-          tags: glideinwms/ce-workspace:${{env.DH_LABEL}}
+          tags: glideinwms/ce-workspace:sl7_${{env.DH_LABEL}}
           build-args: |
             BUILD_SHA=${{env.GITHUB_SHA}}
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
-            GWMS_VERSION=${{env.DH_LABEL}}
+            GWMS_VERSION=sl7_${{env.DH_LABEL}}
 
-      - name: Build and push factory-workspace
+      - name: Build and push factory-workspace SL7
         id: docker_build_factory_workspace
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          #platforms: linux/amd64
           context: workspaces
           file: workspaces/factory-workspace/Dockerfile
-          tags: glideinwms/factory-workspace:${{env.DH_LABEL}}
+          tags: glideinwms/factory-workspace:sl7_${{env.DH_LABEL}}
           build-args: |
             BUILD_SHA=${{env.GITHUB_SHA}}
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
-            GWMS_VERSION=${{env.DH_LABEL}}
+            GWMS_VERSION=sl7_${{env.DH_LABEL}}
 
-      - name: Build and push frontend-workspace
+      - name: Build and push frontend-workspace SL7
         id: docker_build_frontend_workspace
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          #platforms: linux/amd64
           context: workspaces
           file: workspaces/frontend-workspace/Dockerfile
-          tags: glideinwms/frontend-workspace:${{env.DH_LABEL}}
+          tags: glideinwms/frontend-workspace:sl7_${{env.DH_LABEL}}
           build-args: |
             BUILD_SHA=${{env.GITHUB_SHA}}
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
-            GWMS_VERSION=${{env.DH_LABEL}}
+            GWMS_VERSION=sl7_${{env.DH_LABEL}}

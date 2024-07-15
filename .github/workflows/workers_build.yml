@@ -26,6 +26,17 @@ on:
     branches: [main]
     tags: [latest*]
     paths: ['worker/**']
+  workflow_dispatch:
+    inputs:
+      date_tag:
+        description: 'True to add the date to the image tag'
+        required: true
+        default: false
+        type: boolean
+      label:
+        description: 'Label to use as image tag'
+        required: false
+        type: string
   repository_dispatch:
     types:
       - worker-build
@@ -64,9 +75,16 @@ jobs:
         run: |
           echo "DH_LABEL=${{ github.event.client_payload.label }}" >> $GITHUB_ENV
 
+      - name: set label from inputs
+        id: setlabel_inputs
+        continue-on-error: true
+        if: ${{ inputs.label }}
+        run: |
+          echo "DH_LABEL=${{ inputs.label }}" >> $GITHUB_ENV
+
       - name: add date tag
         continue-on-error: true
-        if: ${{ github.event.client_payload.date_tag }}
+        if: ${{ github.event.client_payload.date_tag }} || ${{ inputs.date_tag }}
         run: |
           echo "DH_LABEL=$DH_LABEL-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
 

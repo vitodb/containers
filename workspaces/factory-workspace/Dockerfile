@@ -26,7 +26,8 @@ LABEL name="Devcontainer for the GlideinWMS Factory on EL7/9" \
       org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.revision="$BUILD_HASH" \
       org.opencontainers.image.ref.name="$BUILD_REF" \
-      org.opencontainers.image.created="$BUILD_DATE"
+      org.opencontainers.image.created="$BUILD_DATE"\
+      org.glideinwms.image.version="$GWMS_VERSION"
 # Declaring ports: webserver, htcondor(shared port)
 EXPOSE 80 9618
 

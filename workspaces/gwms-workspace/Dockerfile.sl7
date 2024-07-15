@@ -4,12 +4,13 @@
 # Selecting AlmaLinux 9 as the base OS
 FROM fermilab/base-sl7:latest
 ARG TARGETPLATFORM
-ARG BUILDPLATFORM
+ARG BUILDPLATFORM=amd64
 ARG BUILD_VERSION=dev
 ARG BUILD_REF
 ARG BUILD_HASH
 ARG BUILD_SHA
 ARG BUILD_DATE
+ARG GWMS_VERSION=latest
 # MAINTAINER is deprecated but it is needed to set Author in the image attributes
 MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
 LABEL name="Base workspace with SL7, OSG 3.6 and base packages required by GlideinWMS and HEPCloud" \
@@ -23,7 +24,8 @@ LABEL name="Base workspace with SL7, OSG 3.6 and base packages required by Glide
       org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.revision="$BUILD_HASH" \
       org.opencontainers.image.ref.name="$BUILD_REF" \
-      org.opencontainers.image.created="$BUILD_DATE"
+      org.opencontainers.image.created="$BUILD_DATE"\
+      org.glideinwms.image.version="$GWMS_VERSION"
 
 RUN echo "Building GWMS base dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for $TARGETPLATFORM"
 
@@ -42,11 +44,12 @@ RUN echo "Building GWMS base dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFOR
 # ?   sed -i "s/priority=90/priority=99/" /etc/yum.repos.d/epel.repo && \
 # ? 
 
-RUN yum install -y wget sed git https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm yum-priorities \
-    https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el7-release-latest.rpm && \
-    setenforce 0 && sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/sysconfig/selinux && \
-    /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo && \
-    sed -i 's/\$basearch/x86_64/g' /etc/yum.repos.d/osg*
+# EPEL, OSG 3.6, wget, sed (from sl7), and yum-priorities are provided in base-sl7
+# Installing and disabling SELinux (required by HTCondor). setenforce may return 1 if already disabled
+RUN yum install -y git selinux-policy-targeted selinux-policy-devel policycoreutils && \
+    setenforce 0 ; sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/sysconfig/selinux
+    # SL7 build is only for x86_64 - Add sed if this changes
+    # sed -i 's/\$basearch/x86_64/g' /etc/yum.repos.d/osg*
     # TODO: remove the sed command above when OSG supports aarch64
 
 # Installing some system management RPMs/sw needed for containers (these are not needed for VMs)
@@ -56,30 +59,25 @@ RUN yum install -y cronie supervisor initscripts ;\
 
 # Installing some base RPMs (gettext is needed by RELEASE, swig and many devel by jsonnet)
 # Install development tools
+# May have to add --nogpgcheck if gh is giving problems
+COPY gwms-workspace/config/gh.repo /etc/yum.repos.d/gh.repo
 #? RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
 RUN yum install -y python36 python36-devel python36-cryptography python36-wheel make openssl-devel gcc gcc-c++ rpm-build gettext swig \
-    gh jq vim zsh sudo psmisc bind-utils mlocate ;\
-    pip3 install debugpy ;
+    jq vim zsh sudo psmisc bind-utils mlocate ;\
+    yum install -y --nogpgcheck gh ;\
+    pip3 install debugpy ; echo "debugpy installed: $?"
 
 # Packages useful for development and administration
-# Common packages for all GlideinWMS/HEPCloud software
-RUN yum -y install apptainer htgettoken osg-ca-certs ;\
-    yum install -y --disablerepo=slf-primary python3-rrdtool ;\
+# Common packages for all GlideinWMS/HEPCloud software (used to have --disablerepo=slf-primary for rrdtool, not needed)
+# Installing HTCondor from OSG
+RUN yum -y install apptainer htgettoken osg-ca-certs python3-rrdtool condor ;\
     /usr/bin/wget -O ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases
 
-# Installing HTCondor
-# NOTE: OSG repos do not provide noarch HTCondor RPMs. Using https://get.htcondor.org
-RUN curl -fsSL https://get.htcondor.org | /bin/bash -s -- --no-dry-run
-
-# Installing htgettoken from source
-# NOTE: htgettoken is not available in OSG 3.6 for EL9
-#RUN dnf -y install krb5-devel ;\
-#    git clone https://github.com/fermitools/htgettoken.git /opt/htgettoken && \
-#    pip install /opt/htgettoken/
-    
-# osg-wn-client already installed and osg-ca-certs is a dependency. Should CRLs (.r0) be removed?
-#RUN yum -y install osg-ca-certs osg-wn-client \
+# Should CRLs (.r0) be removed?
 #    && rm -f /etc/grid-security/certificates/*.r0
+
+# When using multiple architectures, HTCondor needs its installer not in the OSG repo (remove condor from above)
+#RUN curl -fsSL https://get.htcondor.org | /bin/bash -s -- --no-dry-run
 
 # Postponing dnf/yum/pip cleaning to later, to leave caches for next steps
 # This must be after all dnf/yum and pip commands

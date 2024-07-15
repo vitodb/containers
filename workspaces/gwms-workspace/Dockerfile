@@ -10,6 +10,7 @@ ARG BUILD_REF
 ARG BUILD_HASH
 ARG BUILD_SHA
 ARG BUILD_DATE
+ARG GWMS_VERSION=latest
 # MAINTAINER is deprecated but it is needed to set Author in the image attributes
 MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
 LABEL name="Base workspace with EL9, OSG 3.6 and base packages required by GlideinWMS and HEPCloud" \
@@ -23,7 +24,8 @@ LABEL name="Base workspace with EL9, OSG 3.6 and base packages required by Glide
       org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.revision="$BUILD_HASH" \
       org.opencontainers.image.ref.name="$BUILD_REF" \
-      org.opencontainers.image.created="$BUILD_DATE"
+      org.opencontainers.image.created="$BUILD_DATE"\
+      org.glideinwms.image.version="$GWMS_VERSION"
 
 RUN echo "Building GWMS base dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for $TARGETPLATFORM"
 
@@ -38,6 +40,7 @@ RUN echo "Building GWMS base dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFOR
 #    echo "exclude=*condor*" >> /etc/yum.repos.d/osg.repo
 # Assigning the epel repo prio of 99 to make sure it is after the OSG one (98 by default)
 # Installing wget to help with repo setup
+# osg 23 https://repo.opensciencegrid.org/osg/23-main/osg-23-main-el9-release-latest.rpm
 RUN dnf install -y epel-release wget sed git yum-utils \
     https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el9-release-latest.rpm && \
     dnf config-manager --set-enabled crb && \
@@ -61,6 +64,8 @@ RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.rep
 # Common packages for all GlideinWMS/HEPCloud software
 RUN dnf -y install apptainer python3-rrdtool osg-ca-certs ;\
     /usr/bin/wget -O ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases
+# Should CRLs (.r0) be removed?
+#    && rm -f /etc/grid-security/certificates/*.r0
 
 # Installing HTCondor
 # NOTE: OSG repos do not provide noarch HTCondor RPMs. Using https://get.htcondor.org
@@ -71,10 +76,6 @@ RUN curl -fsSL https://get.htcondor.org | /bin/bash -s -- --no-dry-run
 RUN dnf -y install krb5-devel ;\
     git clone https://github.com/fermitools/htgettoken.git /opt/htgettoken && \
     pip install /opt/htgettoken/
-    
-# osg-wn-client already installed and osg-ca-certs is a dependency. Should CRLs (.r0) be removed?
-#RUN yum -y install osg-ca-certs osg-wn-client \
-#    && rm -f /etc/grid-security/certificates/*.r0
 
 # Postponing dnf/yum/pip cleaning to later, to leave caches for next steps
 # This must be after all dnf/yum and pip commands
