@@ -16,6 +16,7 @@
 # TODO: reduce run times, these allow filters at the job level:
 #       https://github.com/tj-actions/changed-files
 #       https://github.com/dorny/paths-filter
+# TODO: single wf also sl7 on-pull setting variable? DH_OS env? image name, tag name, platform list
 
 name: Build and Push Workspaces
 
@@ -37,12 +38,19 @@ on:
         description: 'Label to use as image tag'
         required: false
         type: string
+      sl7_build:
+        description: 'True if building for CentOS7/SL7'
+        required: true
+        default: false
+        type: boolean
   repository_dispatch:
     types:
       - workspaces-build
 
 env:
   DH_LABEL: latest
+  DH_PREFIX: ''
+  DH_PLATFORMS: linux/amd64,linux/arm64
   OSG_VERSION: NO
 
 jobs:
@@ -88,6 +96,14 @@ jobs:
         run: |
           echo "DH_LABEL=$DH_LABEL-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
 
+      - name: set variables for SL7 build from inputs
+        id: setsl7_inputs
+        continue-on-error: true
+        if: ${{ inputs.sl7_build }}
+        run: |
+          echo "DH_PREFIX=sl7_" >> $GITHUB_ENV
+          echo "DH_PLATFORMS=linux/amd64" >> $GITHUB_ENV
+
       - uses: satackey/action-docker-layer-caching@v0.0.11
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
@@ -113,16 +129,16 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/gwms-workspace/Dockerfile
-          tags: glideinwms/gwms-workspace:${{env.DH_LABEL}}
+          tags: glideinwms/gwms-workspace:${{env.DH_PREFIX}}${{env.DH_LABEL}}
           build-args: |
             BUILD_SHA=${{env.GITHUB_SHA}}
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
-            GWMS_VERSION=${{env.DH_LABEL}}
+            GWMS_VERSION=${{env.DH_PREFIX}}${{env.DH_LABEL}}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
 
@@ -131,45 +147,45 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/ce-workspace/Dockerfile
-          tags: glideinwms/ce-workspace:${{env.DH_LABEL}}
+          tags: glideinwms/ce-workspace:${{env.DH_PREFIX}}${{env.DH_LABEL}}
           build-args: |
             BUILD_SHA=${{env.GITHUB_SHA}}
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
-            GWMS_VERSION=${{env.DH_LABEL}}
+            GWMS_VERSION=${{env.DH_PREFIX}}${{env.DH_LABEL}}
 
       - name: Build and push factory-workspace
         id: docker_build_factory_workspace
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/factory-workspace/Dockerfile
-          tags: glideinwms/factory-workspace:${{env.DH_LABEL}}
+          tags: glideinwms/factory-workspace:${{env.DH_PREFIX}}${{env.DH_LABEL}}
           build-args: |
             BUILD_SHA=${{env.GITHUB_SHA}}
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
-            GWMS_VERSION=${{env.DH_LABEL}}
+            GWMS_VERSION=${{env.DH_PREFIX}}${{env.DH_LABEL}}
 
       - name: Build and push frontend-workspace
         id: docker_build_frontend_workspace
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/frontend-workspace/Dockerfile
-          tags: glideinwms/frontend-workspace:${{env.DH_LABEL}}
+          tags: glideinwms/frontend-workspace:${{env.DH_PREFIX}}${{env.DH_LABEL}}
           build-args: |
             BUILD_SHA=${{env.GITHUB_SHA}}
             BUILD_HASH=${{env.GITHUB_HASH}}
             BUILD_REF=${{env.GITHUB_REF}}
             BUILD_DATE=${{env.BUILD_DATE}}
-            GWMS_VERSION=${{env.DH_LABEL}}
+            GWMS_VERSION=${{env.DH_PREFIX}}${{env.DH_LABEL}}

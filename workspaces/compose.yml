@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # IMAGE_NAMESPACE: 'glideinwms'
+# IMAGE_LABEL: 'latest'
 # GWMS_PATH: 'gwms-dev-local'
 
 services:
@@ -11,9 +12,9 @@ services:
     build:
       context: .
       cache_from:
-        - ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:latest
+        - ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:${IMAGE_LABEL-latest}
       dockerfile: ce-workspace/Dockerfile
-    image: ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:latest
+    image: ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:${IMAGE_LABEL-latest}
     networks:
       - gwms
     hostname: ce-workspace.glideinwms.org
@@ -26,9 +27,9 @@ services:
     build:
       context: .
       cache_from:
-        - ${IMAGE_NAMESPACE-glideinwms}/factory-workspace:latest
+        - ${IMAGE_NAMESPACE-glideinwms}/factory-workspace:${IMAGE_LABEL-latest}
       dockerfile: factory-workspace/Dockerfile
-    image: ${IMAGE_NAMESPACE-glideinwms}/factory-workspace:latest
+    image: ${IMAGE_NAMESPACE-glideinwms}/factory-workspace:${IMAGE_LABEL-latest}
     volumes:
       - gwms-tokens:/var/lib/gwms-factory/.condor/tokens.d
       - ${GWMS_PATH-gwms-dev-local}:/opt/gwms
@@ -46,9 +47,9 @@ services:
     build:
       context: .
       cache_from:
-        - ${IMAGE_NAMESPACE-glideinwms}/frontend-workspace:latest
+        - ${IMAGE_NAMESPACE-glideinwms}/frontend-workspace:${IMAGE_LABEL-latest}
       dockerfile: frontend-workspace/Dockerfile
-    image: ${IMAGE_NAMESPACE-glideinwms}/frontend-workspace:latest
+    image: ${IMAGE_NAMESPACE-glideinwms}/frontend-workspace:${IMAGE_LABEL-latest}
     volumes:
       - gwms-tokens:/var/lib/gwms-frontend/.condor/tokens.d
       - ${GWMS_PATH-gwms-dev-local}:/opt/gwms
