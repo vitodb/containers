@@ -20,13 +20,12 @@
 name: Build and Push Workspaces
 
 on:
-# Temporary disable automatic build to allow SL7 tests
-#  push:
-#    branches: [main ]
-#    paths: ['workspaces/**']
-#  pull_request:
-#    branches: [main ]
-#    paths: ['workspaces/**']
+  push:
+    branches: [main ]
+    paths: ['workspaces/**']
+  pull_request:
+    branches: [main ]
+    paths: ['workspaces/**']
   workflow_dispatch:
     inputs:
       date_tag:

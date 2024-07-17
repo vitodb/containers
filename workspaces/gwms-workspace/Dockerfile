@@ -40,9 +40,10 @@ RUN echo "Building GWMS base dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFOR
 #    echo "exclude=*condor*" >> /etc/yum.repos.d/osg.repo
 # Assigning the epel repo prio of 99 to make sure it is after the OSG one (98 by default)
 # Installing wget to help with repo setup
-# osg 23 https://repo.opensciencegrid.org/osg/23-main/osg-23-main-el9-release-latest.rpm
+# osg 23  https://repo.opensciencegrid.org/osg/23-main/osg-23-main-el9-release-latest.rpm
+# osg 3.6 https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el9-release-latest.rpm 
 RUN dnf install -y epel-release wget sed git yum-utils \
-    https://repo.opensciencegrid.org/osg/3.6/osg-3.6-el9-release-latest.rpm && \
+    https://repo.opensciencegrid.org/osg/23-main/osg-23-main-el9-release-latest.rpm && \
     dnf config-manager --set-enabled crb && \
     /bin/sed -i '/^enabled=1/a priority=99' /etc/yum.repos.d/epel.repo && \
     sed -i 's/\$basearch/x86_64/g' /etc/yum.repos.d/osg*
