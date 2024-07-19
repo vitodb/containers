@@ -64,7 +64,8 @@ RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.rep
 # Packages useful for development and administration
 # Common packages for all GlideinWMS/HEPCloud software
 RUN dnf -y install apptainer python3-rrdtool osg-ca-certs ;\
-    /usr/bin/wget -O ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases
+    /usr/bin/wget -O ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases && \
+    . ~/.bash_aliases || true
 # Should CRLs (.r0) be removed?
 #    && rm -f /etc/grid-security/certificates/*.r0
 

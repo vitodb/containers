@@ -71,8 +71,8 @@ RUN yum install -y python36 python36-devel python36-cryptography python36-wheel 
 # Common packages for all GlideinWMS/HEPCloud software (used to have --disablerepo=slf-primary for rrdtool, not needed)
 # Installing HTCondor from OSG
 RUN yum -y install apptainer htgettoken osg-ca-certs python3-rrdtool condor ;\
-    /usr/bin/wget -O ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases
-
+    /usr/bin/wget -O ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases && \
+    . ~/.bash_aliases || true
 # Should CRLs (.r0) be removed?
 #    && rm -f /etc/grid-security/certificates/*.r0
 

@@ -46,9 +46,20 @@ are configured consistently.
 Do not use this setup connected to the open Internet. The CA certificate and key used to self-sign the ITB
 host certificates are publicly available, anyone can generate new host certificates!
 
-Alternatively, there is also also a script build locally all the GlideinWMS containers (the IMAGE_NAMESPACE variable is optional):
+You can also use different versions of the ITB images and containers.
+E.g. to run with SL7 nodes:
+```commandline
+IMAGE_NAMESPACE=docker.io/glideinwms IMAGE_LABEL=sl7_latest-20240717-0328 podman-compose pull
+IMAGE_NAMESPACE=docker.io/glideinwms IMAGE_LABEL=sl7_latest-20240717-0328 GWMS_PATH=/myworkdir/ws-test/gwms/ podman-compose up -d
+```
+
+There are also also a script build locally all the GlideinWMS containers (the IMAGE_NAMESPACE variable is optional):
 ```bash
 IMAGE_NAMESPACE=glideinwms ./build-all.sh
+```
+and one to pull or re-tag images:
+```bash
+./pull-all.sh -vt -s sl7_latest-20240717-0328 -d sl7_latest
 ```
 
 Other useful commands:
