@@ -37,7 +37,7 @@ if $FULL_STARTUP; then
     # Just the first time
     [[ -n "$VERBOSE" ]] && echo "Full startup" || true
     bash /root/scripts/create-host-certificate.sh -d "$GWMS_DIR"/secrets
-    $DO_LINK_GIT && bash /root/scripts/link-git.sh -a -p 3.9 -d "$GWMS_DIR"
+    $DO_LINK_GIT && bash /root/scripts/link-git.sh -a -d "$GWMS_DIR"
     bash /root/scripts/create-idtokens.sh -a
     systemctl start httpd
     systemctl start condor
@@ -45,7 +45,7 @@ else
     # Stop before refresh
     [[ -n "$VERBOSE" ]] && echo "Refresh only" || true
     systemctl stop gwms-factory
-    $DO_LINK_GIT && bash /root/scripts/link-git.sh -a -p 3.9 -d "$GWMS_DIR"
+    $DO_LINK_GIT && bash /root/scripts/link-git.sh -a -d "$GWMS_DIR"
     systemctl restart condor  # in case the configuration changes
 fi
 # All the times

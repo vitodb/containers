@@ -10,14 +10,14 @@ Link a GlideinWMS RPM installation to a Git repository
   -h       print this message
   -v       verbose mode
   -d DIR   GlideinWMS directory (GWMS_DIR, Default: /opt/gwms). The repository will be in its ./glideinwms subdirectory
-  -p PYVER Python version (Default: 3.9)
+  -p PYVER Python version e.g. 3.9, 3.6, auto (Default: auto. Detect the highest version installed in /usr/lib/python*)
   -a       set up fActory
   -r       set up fRontend
 EOF
 }
 
 GWMS_DIR=/opt/gwms
-PYVER="3.9"
+PYVER="auto"
 while getopts "hd:p:var" option
 do
   case "${option}"
@@ -31,6 +31,12 @@ do
     *) echo "ERROR: Invalid option"; help_msg; exit 1;;
   esac
 done
+
+if [[ "${PYVER}" = auto ]]; then
+    PYVER="$(ls -d /usr/lib/python3* | tail -n1)"
+    PYVER=${PYVER#/usr/lib/python}
+    [[ -n "$VERBOSE" ]] && echo "PYVER auto. Detected and using Python $PYVER."
+fi
 
 if [ ! -d "/usr/lib/python${PYVER}/site-packages/glideinwms" ]; then
     echo "ERROR: GlideinWMS appears not installed (/usr/lib/python${PYVER}/site-packages/glideinwms is missing)"
