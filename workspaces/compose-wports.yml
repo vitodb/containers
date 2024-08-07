@@ -23,6 +23,7 @@ services:
       - 35000:5000
       - 30080:80
       - 30443:443
+      - 39618:9618
 
   frontend-workspace:
     extends:

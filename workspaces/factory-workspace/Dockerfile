@@ -29,7 +29,7 @@ LABEL name="Devcontainer for the GlideinWMS Factory on EL7/9" \
       org.opencontainers.image.created="$BUILD_DATE"\
       org.glideinwms.image.version="$GWMS_VERSION"
 # Declaring ports: webserver, htcondor(shared port)
-EXPOSE 80 9618
+EXPOSE 80 443 9618
 
 RUN echo "Building Factory dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for $TARGETPLATFORM"
 
