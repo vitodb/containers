@@ -22,7 +22,15 @@ Some notable tools used in these containers:
 ## Use
 
 To use the containers you need docker or podman (recommended).
-You can start the GlideinWMS ITB setup with the following commands.
+You need also a cloned version of this repository. At least the conpose files in this direcotry.
+```
+cd /myworkdir
+mkdir ws-test; cd ws-test
+TEST_DIR=$(pwd)
+git clone https://github.com/glideinWMS/containers.git
+cd containers/workspaces
+```
+Then you can start the GlideinWMS ITB setup with the following commands.
 `IMAGE_NAMESPACE` is optional, allows to pick a different repository, you can use local or also a full path like `docker.io/USERNAME/IMAGE`, `glideinwms` namespace is the default.
 `podman-compose up` builds unavailable images, so use the pull command to download the all the images from the repository (e.g. glideinwms on Docker Hub) if you prefer so:
 ```bash
@@ -35,8 +43,9 @@ podman-compose -f compose-buildbase.yml build
 And then start (and build if needed) the main images using the compose.yml file.
 `GMWS_PATH` is a common directory, e.g. for the GWMS sources; it is optional, the directory is created if not existing, and a local shared volume is used if not passed.
 ```bash
-mkdir /myworkdir/ws-test/gwms  # Optional, if you'd like to put something in it
-GWMS_PATH=/myworkdir/ws-test/gwms/ podman-compose up -d
+# Assuming you are in the workspaces directory and TEST_DIR is defined from above
+mkdir "$TEST_DIR"/gwms  # Optional, if you'd like to put something in it
+GWMS_PATH="$TEST_DIR"/gwms/ podman-compose up -d
 ```
 and bring it down with `podman-compose down`.
 
