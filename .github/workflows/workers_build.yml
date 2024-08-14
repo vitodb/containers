@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        
+
       - name: set debug info
         id: set_debug
         shell: bash
@@ -96,51 +96,6 @@ jobs:
         continue-on-error: true
         if: ${{ github.event.client_payload.date_tag == true || inputs.date_tag == true }}
         run: |
-          toadd=DateRun
-          if [[ "${{ github.event.client_payload.date_tag }}" || "${{ inputs.date_tag }}" ]]; then
-            toadd="$toadd,DateTrue"
-          fi
-          if [[ "${{ github.event.client_payload.date_tag }}" = true ]]; then
-            toadd="$toadd,DatePdTrue"
-          fi
-          if [[ "${{ inputs.date_tag }}" = true ]]; then
-            toadd="$toadd,DateInTrue"
-          fi
-          echo "DBG_INFO=${DBG_INFO}$toadd," >> $GITHUB_ENV
-          echo "DH_LABEL=$DH_LABEL-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
-
-      - name: add date tag payload
-        continue-on-error: true
-        if: ${{ github.event.client_payload.date_tag }}
-        run: |
-          toadd=DateRunPd
-          if [[ "${{ github.event.client_payload.date_tag }}" || "${{ inputs.date_tag }}" ]]; then
-            toadd="$toadd,DateTrue"
-          fi
-          if [[ "${{ github.event.client_payload.date_tag }}" = true ]]; then
-            toadd="$toadd,DatePdTrue"
-          fi
-          if [[ "${{ inputs.date_tag }}" = true ]]; then
-            toadd="$toadd,DateInTrue"
-          fi
-          echo "DBG_INFO=${DBG_INFO}$toadd," >> $GITHUB_ENV
-          echo "DH_LABEL=$DH_LABEL-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
-
-      - name: add date tag input
-        continue-on-error: true
-        if: ${{ inputs.date_tag }}
-        run: |
-          toadd=DateRunIn
-          if [[ "${{ github.event.client_payload.date_tag }}" || "${{ inputs.date_tag }}" ]]; then
-            toadd="$toadd,DateTrue"
-          fi
-          if [[ "${{ github.event.client_payload.date_tag }}" = true ]]; then
-            toadd="$toadd,DatePdTrue"
-          fi
-          if [[ "${{ inputs.date_tag }}" = true ]]; then
-            toadd="$toadd,DateInTrue"
-          fi
-          echo "DBG_INFO=${DBG_INFO}$toadd," >> $GITHUB_ENV
           echo "DH_LABEL=$DH_LABEL-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
