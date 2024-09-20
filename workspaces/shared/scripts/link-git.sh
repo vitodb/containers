@@ -3,27 +3,35 @@
 # SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
+GWMS_REPO=https://github.com/glideinWMS/glideinwms.git
+GWMS_DIR=/opt/gwms
+# Leaving unchanged. Default branch after cloning is master
+GWMS_REPO_REF=
+PYVER="auto"
+
 help_msg() {
     cat << EOF
 $0 [options] 
 Link a GlideinWMS RPM installation to a Git repository
   -h       print this message
   -v       verbose mode
-  -d DIR   GlideinWMS directory (GWMS_DIR, Default: /opt/gwms). The repository will be in its ./glideinwms subdirectory
+  -c REF   Checkout REF in the GlideinWMS Git repository (Default: no checkout, leave the default/existing reference)
+  -u URL   Git repository URL (Default: $GWMS_REPO)
+  -d DIR   GlideinWMS directory (GWMS_DIR, Default: $GWMS_DIR). The repository will be in its ./glideinwms subdirectory
   -p PYVER Python version e.g. 3.9, 3.6, auto (Default: auto. Detect the highest version installed in /usr/lib/python*)
   -a       set up fActory
   -r       set up fRontend
 EOF
 }
 
-GWMS_DIR=/opt/gwms
-PYVER="auto"
-while getopts "hd:p:var" option
+while getopts "hc:u:d:p:var" option
 do
   case "${option}"
     in
     h) help_msg; exit 0;;
     v) VERBOSE=yes;;
+    c) GWMS_REPO_REF=${OPTARG};;
+    u) GWMS_REPO=${OPTARG};;
     d) GWMS_DIR=${OPTARG%/};;
     p) PYVER=$OPTARG;;
     a) IS_FACTORY=yes;;
@@ -48,7 +56,15 @@ if ! mkdir -p "$GWMS_DIR"; then
 fi
 GWMS_SRC_DIR="$GWMS_DIR"/glideinwms
 if [[ ! "$(ls -A "$GWMS_SRC_DIR" 2>/dev/null)" ]]; then
-    git clone https://github.com/glideinWMS/glideinwms.git "$GWMS_SRC_DIR"
+    git clone $GWMS_REPO "$GWMS_SRC_DIR"
+fi
+if [[ -n "$GWMS_REPO_REF" ]]; then
+    # shellcheck disable=SC2164
+    pushd "$GWMS_SRC_DIR"
+    git checkout "$GWMS_REPO_REF"
+    [[ -n "$VERBOSE" ]] && echo "Checking out $GWMS_REPO_REF in the linked Git repository" || true
+    # shellcheck disable=SC2164
+    popd
 fi
 
 [[ ! "$(ls -A "$GWMS_SRC_DIR" 2>/dev/null)" ]] && { echo "Failed to clone GlideinWMS Git repository. Unable to link it."; exit 1; } || true
@@ -80,6 +96,10 @@ if [[ -n "$IS_FRONTEND" ]]; then
     mv /var/lib/gwms-frontend/web-base /var/lib/gwms-frontend/web-base_rpm
     ln -s "$GWMS_SRC_DIR"/creation /var/lib/gwms-frontend/creation
     ln -s "$GWMS_SRC_DIR"/creation/web_base /var/lib/gwms-frontend/web-base
+    if [[ -d /etc/gwms-frontend/plugin.d ]]; then
+        mv /etc/gwms-frontend/plugin.d /etc/gwms-frontend/plugin.d_rpm
+        ln -s "$GWMS_SRC_DIR"/plugins /etc/gwms-frontend/plugin.d
+    fi
 fi
 
 # Remove $1 and replace with a soft link to $2/$1 (or $2/$3 if $3 is provided)

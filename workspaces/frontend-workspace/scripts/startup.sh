@@ -6,7 +6,9 @@
 GWMS_DIR=/opt/gwms
 FULL_STARTUP=true
 DO_LINK_GIT=
-
+GWMS_REPO=
+# Leaving unchanged. Default branch after cloning is master
+GWMS_REPO_REF=
 help_msg() {
     cat << EOF
 $0 [options] 
@@ -14,11 +16,13 @@ $0 [options]
   -v       verbose mode
   -g       do Git setup (default for regular startup)
   -G       skip Git setup (default for refresh)
+  -c REF   Checkout REF in the GlideinWMS Git repository (Default: no checkout, leave the default/existing reference)
+  -u URL   Git repository URL (See link-git.sh for Default)
   -r       refresh only
 EOF
 }
 
-while getopts "hvgGr" option
+while getopts "hvgGc:u:r" option
 do
   case "${option}"
     in
@@ -26,6 +30,8 @@ do
     v) VERBOSE=yes;;
     g) DO_LINK_GIT=true;;
     G) DO_LINK_GIT=false;;
+    c) GWMS_REPO_REF="-c ${OPTARG}";;
+    u) GWMS_REPO="-u ${OPTARG}";;
     r) FULL_STARTUP=false;;
     *) echo "ERROR: Invalid option"; help_msg; exit 1;;
   esac
@@ -37,7 +43,8 @@ if $FULL_STARTUP; then
     # First time only
     [[ -n "$VERBOSE" ]] && echo "Full startup" || true
     bash /root/scripts/create-host-certificate.sh -d "$GWMS_DIR"/secrets
-    $DO_LINK_GIT && bash /root/scripts/link-git.sh -r -d "$GWMS_DIR" || true
+    # shellcheck disable=SC2086   # Options are unquoted to allow globbing
+    $DO_LINK_GIT && bash /root/scripts/link-git.sh -r -d "$GWMS_DIR" $GWMS_REPO $GWMS_REPO_REF || true
     bash /root/scripts/create-idtokens.sh -r
     systemctl start httpd
     systemctl start condor
@@ -45,7 +52,8 @@ else
     # Other times only (refresh) 
     [[ -n "$VERBOSE" ]] && echo "Refresh only" || true
     systemctl stop gwms-frontend
-    $DO_LINK_GIT && bash /root/scripts/link-git.sh -r -d "$GWMS_DIR" || true
+    # shellcheck disable=SC2086   # Options are unquoted to allow globbing
+    $DO_LINK_GIT && bash /root/scripts/link-git.sh -r -d "$GWMS_DIR" $GWMS_REPO $GWMS_REPO_REF || true
     systemctl restart condor  # in case the configuration changes
 fi
 # All the times
