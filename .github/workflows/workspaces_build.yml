@@ -13,6 +13,9 @@
 #  if date_tag id true a date tag is added to the Docker Hub label (+%Y%m%d-%H%M)
 # -X POST is also optional
 #
+# You can use also the gh cli:
+# jq -n '{"event_type":"workspaces-build", "client_payload": {"label":"latest", "date_tag":true}}' |  \
+#  gh api repos/glideinwms/containers/dispatches --input -
 # TODO: reduce run times, these allow filters at the job level:
 #       https://github.com/tj-actions/changed-files
 #       https://github.com/dorny/paths-filter
