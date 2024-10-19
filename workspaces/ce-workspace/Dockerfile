@@ -35,11 +35,6 @@ RUN echo "Building CE dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for 
 # Install HTCondor-CE
 RUN dnf -y install htcondor-ce-condor
 
-# Install development tools
-RUN dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo ;\
-    dnf install -y gh vim zsh sudo psmisc bind-utils mlocate ;\
-    pip3 install debugpy ;
-
 # This must be after all dnf/yum and pip commands
 # Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
 RUN rm -rf /var/cache/yum/* /var/cache/dnf/* /root/.cache/pip/*
