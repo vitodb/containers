@@ -145,6 +145,22 @@ jobs:
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
 
+      - name: Build and push build-workspace
+        id: docker_build_build_workspace
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          platforms: ${{env.DH_PLATFORMS}}
+          context: workspaces
+          file: workspaces/build-workspace/Dockerfile
+          tags: glideinwms/build-workspace:${{env.DH_PREFIX}}${{env.DH_LABEL}}
+          build-args: |
+            BUILD_SHA=${{env.GITHUB_SHA}}
+            BUILD_HASH=${{env.GITHUB_HASH}}
+            BUILD_REF=${{env.GITHUB_REF}}
+            BUILD_DATE=${{env.BUILD_DATE}}
+            GWMS_VERSION=${{env.DH_PREFIX}}${{env.DH_LABEL}}
+
       - name: Build and push ce-workspace
         id: docker_build_ce_workspace
         uses: docker/build-push-action@v6
