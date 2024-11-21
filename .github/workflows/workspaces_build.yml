@@ -95,7 +95,7 @@ jobs:
 
       - name: add date tag
         continue-on-error: true
-        if: ${{ github.event.client_payload.date_tag }} || ${{ inputs.date_tag }}
+        if: ${{ github.event.client_payload.date_tag || inputs.date_tag }}
         run: |
           echo "DH_LABEL=$DH_LABEL-$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
 
