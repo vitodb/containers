@@ -5,7 +5,8 @@
 ARG GWMS_VERSION=latest
 ARG IMAGE_NAMESPACE=glideinwms
 FROM $IMAGE_NAMESPACE/gwms-workspace:$GWMS_VERSION
-# NOTE: if you need GWMS_VERSION after FROM, you need to repeat it
+# NOTE: if you need GWMS_VERSION after FROM (e.g. in labels), you need to repeat it
+ARG GWMS_VERSION=latest
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 ARG BUILD_VERSION=dev
