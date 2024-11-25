@@ -40,7 +40,7 @@ RUN echo "Building the release building dev image ($BUILD_SHA/$BUILD_DATE) on $B
 RUN yum -y install https://linux-mirrors.fnal.gov/linux/fermilab/almalinux/9/yum-conf-fermilab.rpm && \
     yum -y install krb5-workstation fermilab-conf_kerberos fermilab-util_kx509 svn rpm-build && \
     yum -y --enablerepo=osg-internal install osg-build-deps && \
-    pip install pyyaml && \
+    pip install pyyaml tox && \
     pip install 'git+https://github.com/opensciencegrid/osg-build' 
 
 # Kerberos cache does not work properly in containers, using files
