@@ -16,13 +16,14 @@ $0 [options]
   -v       verbose mode
   -g       do Git setup (default for regular startup)
   -G       skip Git setup (default for refresh)
+  -d DIR   Set GWMS_DIR (default $GWMS_DIR)
   -c REF   Checkout REF in the GlideinWMS Git repository (Default: no checkout, leave the default/existing reference)
   -u URL   Git repository URL (See link-git.sh for Default)
   -r       refresh only
 EOF
 }
 
-while getopts "hvgGc:u:r" option
+while getopts "hvgGd:c:u:r" option
 do
   case "${option}"
     in
@@ -30,6 +31,7 @@ do
     v) VERBOSE=yes;;
     g) DO_LINK_GIT=true;;
     G) DO_LINK_GIT=false;;
+    d) GWMS_DIR="${OPTARG}";;
     c) GWMS_REPO_REF="-c ${OPTARG}";;
     u) GWMS_REPO="-u ${OPTARG}";;
     r) FULL_STARTUP=false;;

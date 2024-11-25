@@ -32,8 +32,8 @@ RUN echo "Building DE dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for 
 
 # See gwms-workspace for the repos setup and base packages
 
-RUN dnf install -y postgresql postgresql-server postgresql-devel && systemctl enable postgresql && postgresql-setup --initdb ;\
-    postgresql-setup --initdb
+RUN dnf install -y postgresql postgresql-server postgresql-devel && systemctl enable postgresql && \
+    postgresql-setup --initdb -k ; \
     yum -y install --enablerepo=osg-development glideinwms-vofrontend
 
 ADD pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
