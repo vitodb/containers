@@ -46,6 +46,9 @@ RUN yum -y install https://linux-mirrors.fnal.gov/linux/fermilab/almalinux/9/yum
 # Kerberos cache does not work properly in containers, using files
 COPY build-workspace/config/0_file_ccache /etc/krb5.conf.d/0_file_ccache
 
+# To export the RPMs in a yum repository
+RUN yum -y install httpd createrepo_c
+
 # This must be after all dnf/yum and pip commands
 # Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
 RUN rm -rf /var/cache/yum/* /var/cache/dnf/* /root/.cache/pip/*
@@ -57,7 +60,19 @@ RUN mkdir -p /opt/osg/svnrepo && \
     do mkdir "$i"; pushd "$i"; \ 
     svn co https://vdt.cs.wisc.edu/svn/native/redhat/branches/${i%_glideinwms}/glideinwms; \
     popd; done && \
-    chown -R abc: /opt/osg
+    chown -R abc: /opt/osg && \
+    usermod -a -G mock abc
+
+# YUM repo setup
+RUN mkdir -p /opt/repo/main /opt/repo/alt && \
+    chown -R abc: /opt/repo
+COPY --chown=abc:abc build-workspace/config/build.repo /opt/repo/
+COPY build-workspace/config/yumrepo.conf /etc/httpd/conf.d/
+
+# Deploy utility scripts
+COPY build-workspace/scripts /opt/scripts
+COPY shared/scripts/create-host-certificate.sh /opt/scripts/
+RUN ln -s /opt/scripts/* /usr/local/bin
     
 # Default entry point
 CMD ["/bin/bash"]

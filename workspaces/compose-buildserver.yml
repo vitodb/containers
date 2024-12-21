@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+# This compose file deploys the build and YUM server.
+# The build-workspace needs to be privileged, otherwise you will not be able to run mock
+# TODO: use an env variable to parameterize privileged (not needed for OSG koji builds)
+
+services:
+
+  ce-workspace:
+    container_name: build-workspace.glideinwms.org
+    build:
+      context: .
+      cache_from:
+        - ${IMAGE_NAMESPACE-glideinwms}/build-workspace:${IMAGE_LABEL-latest}
+      dockerfile: build-workspace/Dockerfile
+    image: ${IMAGE_NAMESPACE-glideinwms}/build-workspace:${IMAGE_LABEL-latest}
+    privileged: true
+    networks:
+      - gwms
+    hostname: build-workspace.glideinwms.org
+    tty: true
+    stdin_open: true
+    stop_grace_period: 2s
+
+networks:
+  gwms:
+    driver: bridge

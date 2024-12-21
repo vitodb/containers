@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+[gwms-build]
+name=GlideinWMS Build Server for Enterprise Linux 9 - x86_64
+baseurl=http://build-workspace.glideinwms.org/repo/main/
+enabled=1
+gpgcheck=0
+priority=75
+
+[gwms-build-alt]
+name=GlideinWMS Build Server for Enterprise Linux 9 - x86_64
+baseurl=http://build-workspace.glideinwms.org/repo/alt/
+enabled=0
+gpgcheck=0
+priority=75
