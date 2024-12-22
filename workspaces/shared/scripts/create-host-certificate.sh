@@ -56,3 +56,11 @@ openssl x509 -req -in "$CERT_FILE" -CA "$CA_CERT" -CAkey "$CA_KEY" -out "$CERT_F
 
 cp "$CA_CERT" /etc/pki/ca-trust/source/anchors/
 update-ca-trust extract
+
+# If mod_ssl is installed, use the generated key and certificate for the Web server
+mod_ssl_conf=/etc/httpd/conf.d/ssl.conf
+if [[ -f "$mod_ssl_conf" ]]; then
+    sed -i -e "/^SSLCertificateFile /c\SSLCertificateFile $CERT_FILE" \
+        -e "/^SSLCertificateKeyFile /c\SSLCertificateKeyFile $KEY_FILE" "$mod_ssl_conf"
+    /sbin/service httpd reload > /dev/null 2>&1 || true
+fi

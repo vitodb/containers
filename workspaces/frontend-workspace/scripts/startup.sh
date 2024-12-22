@@ -49,6 +49,20 @@ if $FULL_STARTUP; then
     $DO_LINK_GIT && bash /opt/scripts/link-git.sh -r -d "$GWMS_DIR" $GWMS_REPO $GWMS_REPO_REF || true
     bash /opt/scripts/create-idtokens.sh -r
     systemctl start httpd
+    # PHP may be used by the logserver
+    if [[ -f /etc/php-fpm.conf ]]; then
+        systemctl start start php-fpm    
+        # the container systemd imitation cannot receive messages
+        echo "systemd_interval = 0" >> /etc/php-fpm.conf
+        if [[ -f /var/lib/gwms-logserver/composer.json ]]; then
+            pushd /var/lib/gwms-logserver/
+            if ! composer install; then
+                # running a second time because the first frequently times out
+                composer install
+            fi
+            popd
+        fi
+    fi
     systemctl start condor
 else
     # Other times only (refresh) 
