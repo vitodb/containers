@@ -7,7 +7,7 @@
 
 services:
 
-  ce-workspace:
+  build-workspace:
     container_name: build-workspace.glideinwms.org
     build:
       context: .
