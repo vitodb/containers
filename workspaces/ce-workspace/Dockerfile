@@ -56,6 +56,13 @@ COPY ce-workspace/config/99-local.conf /etc/condor-ce/config.d/99-local.conf
 COPY shared/config/99-debug.conf /etc/condor-ce/config.d/99-debug.conf
 RUN rm -f /etc/condor/config.d/00-minicondor
 
+# Install Apptainer and a simple image for use with Apptainer/Singularity
+RUN mkdir -p /opt/containers/apptainer && cd /opt/containers/ && \
+    curl -s https://raw.githubusercontent.com/apptainer/apptainer/main/tools/install-unprivileged.sh | \
+    bash -s - /opt/containers/apptainer && \
+    /opt/containers/apptainer/bin/apptainer pull oras://ghcr.io/apptainer/alpine:latest && \
+    echo "APPTAINER_TEST_IMAGE=/opt/containers/alpine_latest.sif" >> /etc/environment
+ 
 # Add fermilab and osg (allows for Google CA in CILogon) users
 RUN useradd fermilab ;\
     useradd osg
