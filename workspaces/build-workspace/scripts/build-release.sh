@@ -26,12 +26,13 @@ Future versions will be generalized for multiple software packages.
   -h       print this message.
   -v       verbose mode.
   -c REF   Checkout REF in the GlideinWMS Git repository (Default: no checkout, leave the default/existing reference).
+           Setting a REF will reset the content of the repository loosing eventual changes.
   -u URL   Git repository URL (Default: $GWMS_REPO).
   -d DIR   GlideinWMS directory (GWMS_DIR, Default: $GWMS_DIR). The repository will be in its ./glideinwms subdirectory.
   -p PYVER Python version e.g. 39, 3.9, 36, 3.6, auto (Default: auto. Detect the highest version installed in /usr/lib/python*).
   -r REL   Release string, e.g. v3_10_9. Mandatory (will be auto detected in the future).
   -n RCN   Release candidate number, e.g. 2. Defaults to empty, no RC (full release).
-  -y REPO  YUM repository (alt or main - Default: $B_REPO).
+  -y REPO  YUM repository ('alt' or 'main' - Default: $B_REPO).
 EOF
 }
 
@@ -66,8 +67,9 @@ fi
 
 if [[ -n "$GWMS_REPO_REF" ]]; then
     git fetch "$GWMS_REPO_REMOTE"
-    git reset -hard
-    git checkout "$GWMS_REPO_REF"
+    # git checkout "$GWMS_REPO_REF"
+    # This is more robust if there were changes in the source tree
+    git reset -hard "$GWMS_REPO_REMOTE/$GWMS_REPO_REF"
 fi
 
 if [[ "${PYVER}" = auto ]]; then
@@ -93,8 +95,16 @@ fi
 # Make the release    
 cd ..
 # ./glideinwms/build/ReleaseManager/release.py --release-version="$B_RELEASE" --source-dir=`pwd`/glideinwms --release-dir=`pwd`/distro --rc=3 --python=python39 --verbose
-./glideinwms/build/ReleaseManager/release.py --release-version="$B_RELEASE" --source-dir="$GWMS_SRC_DIR" --release-dir=`pwd`/distro "$B_RC" --python="python$PYVER" --verbose
+if ! ./glideinwms/build/ReleaseManager/release.py --release-version="$B_RELEASE" --source-dir="$GWMS_SRC_DIR" --release-dir=`pwd`/distro "$B_RC" --python="python$PYVER" --verbose; then
+    echo "GlideinWMS release building failed."
+    exit 1
+fi
 
 # Update the YUM repository 
-cp distro/"$B_DIR"/rpmbuild/RPMS/*rpm /opt/repo/"$B_REPO"/
-pushd /opt/repo/ && createrepo main/ && createrepo alt/
+if ! cp distro/"$B_DIR"/rpmbuild/RPMS/*rpm /opt/repo/"$B_REPO"/; then
+    echo "Copy of the packages to the repository failed."
+    exit 1
+fi
+pushd /opt/repo/ && createrepo main/ && createrepo alt/ && popd
+
+echo "YUM repository $B_REPO updated with $B_DIR"
