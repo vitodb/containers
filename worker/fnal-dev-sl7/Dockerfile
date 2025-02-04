@@ -16,12 +16,19 @@ RUN yum -y install asciidoc autoconf automake bzip2-devel fontconfig-devel freet
     java-latest-openjdk-devel \
     mesa-dri-drivers ddd
 
+# Fix pseudoterminal in unpriv. namespace; see https://github.com/apptainer/apptainer/issues/297
+RUN yum -y install https://linuxsoft.cern.ch/wlcg/centos7/x86_64/glibc-grantpt-fix-1.0.0-1.el7.cern.x86_64.rpm
+
 # Packages requiring additional repos
 RUN curl -sSf 'https://packagecloud.io/install/repositories/github/git-lfs/config_file.repo?os=centos&dist=7&source=script' > /etc/yum.repos.d/github_git-lfs.repo
 # Installed in sl7-base  RUN yum -y install yum-conf-context-fermilab.noarch
 RUN yum -y install fermilab-util_kx509 fermilab-conf_kerberos \
     git-lfs \
     && yum -y clean all
+
+# Add ddd alias to preload glibc-grantpt-fix library that allows ddd to run properly
+ADD shared/ddd.sh /etc/profile.d/ddd.sh
+ADD shared/ddd.csh /etc/profile.d/ddd.csh
 
 # Default entry point
 CMD ["/bin/bash"]
