@@ -50,9 +50,13 @@ COPY factory-workspace/scripts/* /opt/scripts
 RUN ln -s /opt/scripts/* /usr/local/bin
 
 # Download HTCondor tarballs
+# HTCondor 24.0 current to test that last stable version on Alma9 (This is rolling to the latest 24.0.x release)
 # HTCondor 10.6.0 to test a more recent version on Alma9
 # HTCondor 9.0.18 to test also hybrid configurations on EL7 (x86_64 only, leave the tar file to avoid rebuild problems)
 RUN pushd /var/lib/gwms-factory/condor ;\
+    wget https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.3/release/condor-24.0.3-$(arch)_AlmaLinux9-stripped.tar.gz ;\
+    tar -xf condor-24.0.3-$(arch)_AlmaLinux9-stripped.tar.gz ;\
+    rm -f condor-24.0.3-$(arch)_AlmaLinux9-stripped.tar.gz ;\
     wget https://research.cs.wisc.edu/htcondor/tarball/10/10.x/10.6.0/release/condor-10.6.0-$(arch)_AlmaLinux9-stripped.tar.gz ;\
     tar -xf condor-10.6.0-$(arch)_AlmaLinux9-stripped.tar.gz ;\
     rm -f condor-10.6.0-$(arch)_AlmaLinux9-stripped.tar.gz ;\
