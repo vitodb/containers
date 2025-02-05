@@ -107,13 +107,14 @@ jobs:
           echo "DH_PREFIX=sl7_" >> $GITHUB_ENV
           echo "DH_PLATFORMS=linux/amd64" >> $GITHUB_ENV
 
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        # Ignore the failure of a step and avoid terminating the job.
-        continue-on-error: true
-        with:
-          key: gwms-docker-cache-{hash}
-          restore-keys: |
-            gwms-docker-cache-
+      # This is not being maintained and has errors
+      #- uses: satackey/action-docker-layer-caching@v0.0.11
+      #  # Ignore the failure of a step and avoid terminating the job.
+      #  continue-on-error: true
+      #  with:
+      #    key: gwms-docker-cache-{hash}
+      #    restore-keys: |
+      #      gwms-docker-cache-
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -132,6 +133,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/gwms-workspace/Dockerfile
@@ -150,6 +153,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/build-workspace/Dockerfile
@@ -166,6 +171,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/ce-workspace/Dockerfile
@@ -182,6 +189,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/factory-workspace/Dockerfile
@@ -198,6 +207,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/frontend-workspace/Dockerfile
@@ -216,6 +227,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           platforms: ${{env.DH_PLATFORMS}}
           context: workspaces
           file: workspaces/testbed-workspace/Dockerfile

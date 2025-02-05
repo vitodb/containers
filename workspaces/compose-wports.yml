@@ -10,14 +10,14 @@ services:
 
   ce-workspace:
     extends:
-      file: compose.yml
+      file: ${BASE_COMPOSE-compose.yml}
       service: ce-workspace
     ports:
       - 29619:9619
 
   factory-workspace:
     extends:
-      file: compose.yml
+      file: ${BASE_COMPOSE-compose.yml}
       service: factory-workspace
     ports:
       - 35000:5000
@@ -27,7 +27,7 @@ services:
 
   frontend-workspace:
     extends:
-      file: compose.yml
+      file: ${BASE_COMPOSE-compose.yml}
       service: frontend-workspace
     ports:
       - 40080:80

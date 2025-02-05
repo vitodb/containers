@@ -58,10 +58,9 @@ RUN rm -f /etc/condor/config.d/00-minicondor
 
 # Install Apptainer and a simple image for use with Apptainer/Singularity
 RUN mkdir -p /opt/containers/apptainer && cd /opt/containers/ && \
-    curl -s https://raw.githubusercontent.com/apptainer/apptainer/main/tools/install-unprivileged.sh | \
-    bash -s - /opt/containers/apptainer && \
-    /opt/containers/apptainer/bin/apptainer pull oras://ghcr.io/apptainer/alpine:latest && \
-    echo "APPTAINER_TEST_IMAGE=/opt/containers/alpine_latest.sif" >> /etc/environment
+    /opt/scripts/local-container.sh || echo "Need to post-install local container"
+# Added safeguard to allow late container installation
+# The Alpine image download is failing on arm64 because the image is for amd94 (x86_64)
  
 # Add fermilab and osg (allows for Google CA in CILogon) users
 RUN useradd fermilab ;\

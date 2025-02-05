@@ -57,12 +57,12 @@ host certificates are publicly available, anyone can generate new host certifica
 
 You can also use different versions of the ITB images and containers.
 E.g. to run with SL7 nodes:
-```commandline
+```bash
 IMAGE_NAMESPACE=docker.io/glideinwms IMAGE_LABEL=sl7_latest-20240717-0328 podman-compose pull
 IMAGE_NAMESPACE=docker.io/glideinwms IMAGE_LABEL=sl7_latest-20240717-0328 GWMS_PATH=/myworkdir/ws-test/gwms/ podman-compose up -d
 ```
 
-There are also also a script build locally all the GlideinWMS containers (the IMAGE_NAMESPACE variable is optional):
+There are also a script build locally all the GlideinWMS containers (the IMAGE_NAMESPACE variable is optional):
 ```bash
 IMAGE_NAMESPACE=glideinwms ./build-all.sh
 ```
@@ -85,6 +85,23 @@ podman exec -it ce-workspace.glideinwms.org /bin/bash
 podman exec -it factory-workspace.glideinwms.org /bin/bash
 podman exec -it frontend-workspace.glideinwms.org /bin/bash
 ```
+
+## Testbed setup
+
+The testbed defined via the `testbed-workspace` image and the `compose-testbed.yml` compose file start from a barebone OS image to test better the RPM installation of the system.
+In this example we use `compose-wports.yml` to be able to also interact from outside.
+```bash
+export TEST_DIR=$HOME/ws-test
+GWMS_PATH="$TEST_DIR"/gwms/ BASE_COMPOSE=compose-testbed.yml podman-compose -f compose-wports.yml up -d
+podman exec -it testbed-ce-workspace.glideinwms.org /opt/scripts/startup.sh
+podman exec -it testbed-factory-workspace.glideinwms.org /opt/scripts/install-glideinwms.sh --logserver
+podman exec -it testbed-frontend-workspace.glideinwms.org /opt/scripts/install-glideinwms.sh
+```
+The installation of the testbed machines is very minimal. To add some development tools you can use `install-developer.sh`, e.g.:
+```bash
+podman exec -it testbed-frontend-workspace.glideinwms.org install-developer.sh
+```
+
 
 ## Troubleshooting
 
