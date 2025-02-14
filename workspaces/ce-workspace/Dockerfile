@@ -60,7 +60,6 @@ RUN rm -f /etc/condor/config.d/00-minicondor
 RUN mkdir -p /opt/containers/apptainer && cd /opt/containers/ && \
     /opt/scripts/local-container.sh || echo "Need to post-install local container"
 # Added safeguard to allow late container installation
-# The Alpine image download is failing on arm64 because the image is for amd94 (x86_64)
  
 # Add fermilab and osg (allows for Google CA in CILogon) users
 RUN useradd fermilab ;\

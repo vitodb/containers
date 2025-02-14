@@ -120,8 +120,8 @@ install_sw(){
         # sudo is required by the run-test script
         dnf install -y sudo
     fi
-    # For now the example logserver is supported on the Factory
-    if [[ "$GWMS_LOGSERVER" && "$GWMS_SW" = factory ]]; then
+    # For now the example logserver is supported only on the Factory
+    if "$GWMS_LOGSERVER" && [[ "$GWMS_SW" = factory ]]; then
         dnf install -y --enablerepo="$GWMS_REPO" glideinwms-logserver
     fi
 }
