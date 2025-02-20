@@ -34,7 +34,7 @@ RUN echo "Building DE dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for 
 
 RUN dnf install -y postgresql postgresql-server postgresql-devel && systemctl enable postgresql && \
     postgresql-setup --initdb -k ; \
-    yum -y install --enablerepo=osg-development glideinwms-vofrontend
+    yum -y install --enablerepo=osg-development decisionengine-deps decisionengine-modules-deps
 
 ADD pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
 

@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+# This compose file deploys the Decision Engine.
+# Env variables to affect behavior: IMAGE_NAMESPACE, 
+# The de-workspace may need to be privileged to run services?
+
+services:
+
+  de-workspace:
+    container_name: testbed-decisionengine-workspace.glideinwms.org
+    build:
+      context: .
+      cache_from:
+        - ${IMAGE_NAMESPACE-docker.io/glideinwms}/testbed-workspace:${IMAGE_LABEL-latest}
+      dockerfile: testbed-workspace/Dockerfile
+    image: ${IMAGE_NAMESPACE-docker.io/glideinwms}/testbed-workspace:${IMAGE_LABEL-latest}
+    # privileged To allow podman in podman (used for Redis)
+    # Some options may be sufficient https://www.redhat.com/en/blog/podman-inside-container
+    # RPiD docker run --cap-add=sys_admin --cap-add mknod --device=/dev/fuse --security-opt seccomp=unconfined --security-opt label=disable
+    # RPiDv2 docker run --cap-add=sys_admin --cap-add mknod --device=/dev/fuse --security-opt seccomp=/usr/share/containers/seccomp.json --security-opt label=disable
+    # RPiRP podman run --cap-add=sys_admin,mknod --device=/dev/fuse --security-opt label=disable
+    # rlPiRP podman run --user podman --security-opt label=disable --security-opt unmask=ALL --device /dev/fuse
+    privileged: true
+    networks:
+      - gwms
+    hostname: decisionengine-workspace.glideinwms.org
+    #depends_on:
+    #  - ce-workspace
+    volumes:
+      - gwms-tokens:/var/lib/decisionengine/.condor/tokens.d
+      - ${GWMS_PATH-gwms-dev-local}:/opt/gwms
+    tty: true
+    stdin_open: true
+    stop_grace_period: 2s
+
+  de-redis:
+    container_name: decisionengine-redis
+    image: ${REDIS_NAMESPACE-docker.io/library/}redis:6
+    privileged: false
+    networks:
+      - gwms
+    hostname: decisionengine-redis.glideinwms.org
+    tty: true
+    stdin_open: true
+    stop_grace_period: 2s
+
+volumes:
+  gwms-dev-local:
+    driver: local
+  gwms-tokens:
+    driver: local
+
+networks:
+  gwms:
+    driver: bridge
