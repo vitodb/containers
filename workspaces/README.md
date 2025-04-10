@@ -62,7 +62,7 @@ IMAGE_NAMESPACE=docker.io/glideinwms IMAGE_LABEL=sl7_latest-20240717-0328 podman
 IMAGE_NAMESPACE=docker.io/glideinwms IMAGE_LABEL=sl7_latest-20240717-0328 GWMS_PATH=/myworkdir/ws-test/gwms/ podman-compose up -d
 ```
 
-There are also a script build locally all the GlideinWMS containers (the IMAGE_NAMESPACE variable is optional):
+There are also a script to build locally all the GlideinWMS containers (the IMAGE_NAMESPACE variable is optional):
 ```bash
 IMAGE_NAMESPACE=glideinwms ./build-all.sh
 ```
@@ -85,6 +85,42 @@ podman exec -it ce-workspace.glideinwms.org /bin/bash
 podman exec -it factory-workspace.glideinwms.org /bin/bash
 podman exec -it frontend-workspace.glideinwms.org /bin/bash
 ```
+
+## To manually build SL7 or EL8 containers
+
+The base workspace, gwms-workspace, has 3 different Dockerfiles: the default EL9 (AlmaLinux9), SL7 (RHEL7/ScientificLinux7), and EL8 (AlmaLinux8).
+Each of them can be used as a base for the other workspaces (except the testbed) and the result will be images with different OSs.
+For example, to have a EL8 CE:
+```bash
+export BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+# Replace 'el8' with 'sl7' for a RHEL7 CE
+export GWMS_VERSION=el8
+podman build --build-arg BUILD_DATE=$BUILD_DATE -t glideinwms/gwms-workspace:$GWMS_VERSION -f gwms-workspace/Dockerfile.$GWMS_VERSION  .
+podman build --build-arg BUILD_DATE=$BUILD_DATE --build-arg GWMS_VERSION=$GWMS_VERSION -t glideinwms/ce-workspace:$GWMS_VERSION  -f ce-workspace/Dockerfile .
+```
+Now you can use the image to add it to a running testbed as `el8ce-workspace.glideinwms.org`, the host name used in the provided Factory configuration.
+You can start the CE manually or add it in a compose file with a section like:
+```yaml
+  el8ce-workspace:
+    container_name: el8ce-workspace.glideinwms.org
+    build:
+      context: .
+      arg:
+        - GWMS_VERSION=el8
+      cache_from:
+        - ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:el8
+      dockerfile: ce-workspace/Dockerfile
+    image: ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:el8
+    volumes:
+      - ${GWMS_PATH-gwms-dev-local}:/opt/gwms
+    networks:
+      - gwms
+    hostname: el8ce-workspace.glideinwms.org
+    tty: true
+    stdin_open: true
+    stop_grace_period: 2s
+```
+
 
 ## Testbed setup
 

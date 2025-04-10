@@ -46,6 +46,11 @@ on:
         required: true
         default: false
         type: boolean
+      el8_build:
+        description: 'True if building for AlmaLinux8/EL8'
+        required: true
+        default: false
+        type: boolean
   repository_dispatch:
     types:
       - workspaces-build
@@ -54,6 +59,7 @@ env:
   DH_LABEL: latest
   DH_PREFIX: ''
   DH_PLATFORMS: linux/amd64,linux/arm64
+  DOCKERFILE_EXT: ''
   OSG_VERSION: NO
 
 jobs:
@@ -105,8 +111,18 @@ jobs:
         if: ${{ inputs.sl7_build }}
         run: |
           echo "DH_PREFIX=sl7_" >> $GITHUB_ENV
+          echo "DOCKERFILE_EXT=.sl7" >> $GITHUB_ENV
           echo "DH_PLATFORMS=linux/amd64" >> $GITHUB_ENV
 
+      - name: set variables for EL8/Alma8 build from inputs
+        id: setel8_inputs
+        continue-on-error: true
+        if: ${{ inputs.el8_build }}
+        run: |
+          echo "DH_PREFIX=el8_" >> $GITHUB_ENV
+          echo "DOCKERFILE_EXT=.el8" >> $GITHUB_ENV
+          echo "DH_PLATFORMS=linux/amd64" >> $GITHUB_ENV
+          
       # This is not being maintained and has errors
       #- uses: satackey/action-docker-layer-caching@v0.0.11
       #  # Ignore the failure of a step and avoid terminating the job.
@@ -223,7 +239,7 @@ jobs:
       - name: Build and push testbed-workspace
         id: docker_build_testbed_workspace
         continue-on-error: true
-        if: ${{ ! inputs.sl7_build }}
+        if: ${{ inputs.sl7_build == false && inputs.el8_build == false }}
         uses: docker/build-push-action@v6
         with:
           push: true
