@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2020 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-# Parameter to allow builds for EL7/9
+# Parameter to allow builds for EL7/8/9
 ARG GWMS_VERSION=latest
 ARG IMAGE_NAMESPACE=glideinwms
 FROM $IMAGE_NAMESPACE/gwms-workspace:$GWMS_VERSION
@@ -16,10 +16,10 @@ ARG BUILD_SHA
 ARG BUILD_DATE
 # MAINTAINER is deprecated but it is needed to set Author in the image attributes
 MAINTAINER GlideinWMS Team <glideinwms@fnal.gov>
-LABEL name="Devcontainer for an EL9 HTCondorCE and worker to be used for GlideinWMS testing" \
+LABEL name="Devcontainer for an EL7/8/9 HTCondorCE and worker to be used for GlideinWMS testing" \
       org.opencontainers.image.authors="GlideinWMS Team glideinwms@fnal.gov" \
       org.opencontainers.image.title="All-in-one HTCondorCE Workspace" \
-      org.opencontainers.image.description="Devcontainer for an EL9 HTCondorCE and worker to be used for GlideinWMS testing" \
+      org.opencontainers.image.description="Devcontainer for an EL7/8/9 HTCondorCE and worker to be used for GlideinWMS testing" \
       org.opencontainers.image.url="https://glideinwms.fnal.gov/" \
       org.opencontainers.image.documentation="https://glideinwms.fnal.gov/" \
       org.opencontainers.image.source="https://github.com/glideinWMS/containers/tree/main/workspaces" \
@@ -37,7 +37,7 @@ RUN echo "Building CE dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for 
 # See gwms-workspace for the repos setup and base packages
 
 # Install HTCondor-CE
-RUN dnf -y install htcondor-ce-condor
+RUN yum -y install htcondor-ce-condor
 
 # This must be after all dnf/yum and pip commands
 # Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
