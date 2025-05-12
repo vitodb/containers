@@ -29,9 +29,11 @@ RUN yum -y install fermilab-util_kx509 fermilab-conf_kerberos \
     git-lfs \
     && yum -y clean all
 
-# Add ddd alias to preload glibc-grantpt-fix library that allows ddd to run properly
+# Add ddd and script aliases to preload glibc-grantpt-fix library that allows ddd and script to run properly
 ADD shared/ddd.sh /etc/profile.d/ddd.sh
 ADD shared/ddd.csh /etc/profile.d/ddd.csh
+ADD shared/script.sh /etc/profile.d/script.sh
+ADD shared/script.csh /etc/profile.d/script.csh
 
 # Default entry point
 CMD ["/bin/bash"]
