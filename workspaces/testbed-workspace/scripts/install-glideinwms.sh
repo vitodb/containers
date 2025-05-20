@@ -173,10 +173,11 @@ install_sw(){
 
     if [[ "$GWMS_SW" = decisionengine ]]; then
         dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$DE_REPO" decisionengine-onenode
+        decisionengine-install-python
         # Git is in the package dependencies
         # pip install git+https://github.com/HEPCloud/decisionengine.git@2.0.3
-        su -s /bin/bash -c 'pip install git+https://github.com/HEPCloud/decisionengine.git' - decisionengine
-        su -s /bin/bash -c 'pip install git+https://github.com/HEPCloud/decisionengine_modules.git' - decisionengine
+        # su -s /bin/bash -c 'pip install git+https://github.com/HEPCloud/decisionengine.git' - decisionengine
+        # su -s /bin/bash -c 'pip install git+https://github.com/HEPCloud/decisionengine_modules.git' - decisionengine
     else
         # Install the GlideinWMS Factory/Frontend
         dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$GWMS_REPO" glideinwms-$GWMS_SW
@@ -239,6 +240,9 @@ configure_de(){
     # Without this the systemctl start was failing and the error was in /var/lib/pgsql/data/log/postgresql-*.log
     mkdir -p /var/run/postgresql
     chown postgres: /var/run/postgresql
+    # Fix Frontend install 
+    # TODO: to improve in packaging - remove when not needed
+    chown -R decisionengine: /etc/gwms-frontend
 }
 
 ### STARTUP ###
@@ -279,15 +283,20 @@ start_frontend(){
 }
 
 start_de(){
-    bash /opt/scripts/create-idtokens.sh -d
-    bash /opt/scripts/create-scitoken.sh -d
+    bash /opt/scripts/create-idtokens.sh -e
+    bash /opt/scripts/create-scitoken.sh -e
     systemctl enable postgresql
     systemctl start postgresql
     createdb -U postgres decisionengine
     # Start Redis
     # yum rm iptables-legacy
     # yum install iptables-nft
-    # podman run --name decisionengine-redis -p 127.0.0.1:6379:6379 -d redis:6 --loglevel warning
+    podman run --name decisionengine-redis -p 127.0.0.1:6379:6379 -d redis:6 --loglevel warning
+    cat << EOF
+To test with a NOP channel:
+cp /opt/config/decisionengine/test_nop_channel.jsonnet /etc/decisionengine/config.d/
+And restart the DE
+EOF
 }
 
 ### MAIN ###

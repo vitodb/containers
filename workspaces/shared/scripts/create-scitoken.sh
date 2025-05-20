@@ -27,7 +27,7 @@ Generate one SciToken with the setting for a specific server or custom ones
   -s SRV   SciToken server (default: $TOKEN_SERVER)
   -i VO    token VO (default: $TOKEN_VO)
   -r       set up fRontend server
-  -d       set up dEcision Engine server
+  -e       set up dEcision Engine server
 EOF
 }
 
@@ -50,13 +50,16 @@ done
 if [[ -n "$IS_FRONTEND" ]]; then
     [[ -n "$TOKEN_DIR" ]] || TOKEN_DIR="$TOKEN_DIR_FRONTEND"
     [[ -n "$TOKEN_OWNER" ]] || TOKEN_OWNER="$TOKEN_OWNER_FRONTEND"
+    [[ -z "$VERBOSE" ]] || echo "Creating Frontend tokens for $TOKEN_OWNER in $TOKEN_DIR."
 fi
 if [[ -n "$IS_DE" ]]; then
     [[ -n "$TOKEN_DIR" ]] || TOKEN_DIR="$TOKEN_DIR_DE"
     [[ -n "$TOKEN_OWNER" ]] || TOKEN_OWNER="$TOKEN_OWNER_DE"
+    [[ -z "$VERBOSE" ]] || echo "Creating Decision Engine tokens for $TOKEN_OWNER in $TOKEN_DIR."
 fi
 
 echo Generating SciToken...
+[[ -n "$TOKEN_DIR" && -n "$TOKEN_OWNER" ]] || { echo "Token owner or directory not defined ($TOKEN_OWNER/$TOKEN_DIR). Aborting"; exit 1; } 
 htgettoken --minsecs=3580 -i "$TOKEN_VO" -v -a "$TOKEN_SERVER" -o "$TOKEN_DIR"/"$HOSTNAME".scitoken
 chown "$TOKEN_OWNER": "$TOKEN_DIR"/"$HOSTNAME".scitoken
 chmod 600 "$TOKEN_DIR"/"$HOSTNAME".scitoken

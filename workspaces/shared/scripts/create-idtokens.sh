@@ -37,6 +37,7 @@ done
 echo Creating IDTOKENS for host $HOSTNAME ...
 # Without -lifetime, idtokens have no lifetime restrictions
 condor_store_cred add -c -p "$HOSTNAME".$RANDOM
+[[ -n "$IS_FACTORY" || -n "$IS_FRONTEND" || -n "$IS_DE" ]] || echo "WARNING: This host is not identified as Factory, nor Frontend, nor Decision Engine."
 if [[ -n "$IS_FACTORY" ]]; then
     TOKEN_DIR=/var/lib/gwms-factory/.condor/tokens.d
     condor_token_create -id vofrontend_service@"$HOSTNAME" -key POOL > "$TOKEN_DIR"/frontend."$HOSTNAME".idtoken
