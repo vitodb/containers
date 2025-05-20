@@ -3,6 +3,7 @@ output  = testjob.out
 error   = testjob.err
 log     = testjob.log
 should_transfer_files = yes
+request_memory = 102M
 
 +WantIOProxy=true
 
