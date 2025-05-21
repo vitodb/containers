@@ -71,7 +71,7 @@ RUN mkdir -p /opt/config/factory /opt/config/frontend /opt/config/decisionengine
 COPY shared/config/* /opt/config
 COPY factory-workspace/config/glideinWMS.xml /opt/config/factory
 COPY frontend-workspace/config/frontend.xml /opt/config/frontend
-COPY decisionengine-workspace/config/test_nop_channel.jsonnet /opt/config/decisionengine
+COPY decisionengine-workspace/config/ /opt/config/decisionengine/
 RUN sed -i "s/\[ARCH\]/$(arch)/g" /opt/config/factory/glideinWMS.xml
 
 # Deploy secrets
