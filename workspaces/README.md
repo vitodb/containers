@@ -154,3 +154,10 @@ podman image list
 podman image rm $(podman image list -q)
 # Some may need to be removed with -f
 ```
+
+If you want to customize the compose services have a look at the [compose specification](https://github.com/compose-spec/compose-spec/blob/main/00-overview.md).
+To be able to apptainer inside a podman container, run (`podman run ...`) with options `--privileged  --device /dev/fuse`
+or at least options `--security-opt seccomp=unconfined --security-opt systempaths=unconfined --security-opt no-new-privileges --device /dev/fuse`.
+`/dev/fuse` is because of squashfs to read SIF files. You can use expanded images or `--unsquash` in apptainer to avoid that.
+
+To run a podman container inside a container you can use `--privileged` or check one of the options [here](https://www.redhat.com/en/blog/podman-inside-container).

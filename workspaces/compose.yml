@@ -4,6 +4,7 @@
 # IMAGE_NAMESPACE: 'glideinwms'
 # IMAGE_LABEL: 'latest'
 # GWMS_PATH: 'gwms-dev-local'
+# Compose specification: https://github.com/compose-spec/compose-spec/blob/main/00-overview.md
 
 services:
 
@@ -15,6 +16,16 @@ services:
         - ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:${IMAGE_LABEL-latest}
       dockerfile: ce-workspace/Dockerfile
     image: ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:${IMAGE_LABEL-latest}
+    # To run apptainer you need:
+    # --security-opt seccomp=unconfined --security-opt systempaths=unconfined [--security-opt no-new-privileges] --device /dev/fuse
+    # OR --privileged --device /dev/fuse
+    # Both option combinations may require root to start the container/compose. Eventually comment to run as others
+    # privileged: true
+    devices:
+      - "/dev/fuse"
+    security_opt:
+      - seccomp:unconfined
+      - systempaths=unconfined
     volumes:
       - ${GWMS_PATH-gwms-dev-local}:/opt/gwms
     networks:

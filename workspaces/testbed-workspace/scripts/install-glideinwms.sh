@@ -16,10 +16,11 @@ GWMS_REPO=osg-development
 GWMS_SW=
 GWMS_LOGSERVER=false
 CHECK_ONLY=false
-GWMS_USE_BUILD=false
 GWMS_USE_CUSTOM_REPO=
 # Outside mounted directory with shared files
 GWMS_DIR=/opt/gwms
+ONLY_START=false
+QUIET=true
 
 help(){
     cat <<EOF 
@@ -38,7 +39,9 @@ Install the EL9 version of the specified GlideinWMS software
 --use-build                 Use the build-workspace container as YUM repo for GlideinWMS and Decision Engine (can use only one --use-... option)
 --use-ssi-dev               Use the ssi-dev YUM repo for GlideinWMS and Decision Engine (can use only one --use-... option)
 --use-ssi                   Use the ssi YUM repo for GlideinWMS and Decision Engine (can use only one --use-... option)
-You cannot set both --factory and --frontend. If none is set the script tries to guess from the hostname
+--start-only                Only restart the installed program
+--verbose                   Verbose messages
+You cannot set more than one of --factory, --de, and --frontend. If none is set the script tries to guess from the hostname
 EOF
 }
 
@@ -72,7 +75,6 @@ while [ -n "$1" ];do
             shift
             ;;
         --use-build)
-            GWMS_USE_BUILD=true
             GWMS_USE_CUSTOM_REPO=build
             ;;
         --use-ssi)
@@ -96,6 +98,12 @@ while [ -n "$1" ];do
         --logserver)
             GWMS_LOGSERVER=true
             ;;
+        --start-only)
+            ONLY_START=true
+            ;;
+        --verbose)
+            QUIET=false
+            ;;
         --help)
             help
             exit 0
@@ -116,6 +124,18 @@ if [[ -z "$GWMS_SW" ]]; then
         GWMS_SW=vofrontend
     elif [[ "$myhost" = *decisionengine* ]]; then
         GWMS_SW=decisionengine
+    elif "$ONLY_START"; then
+        if [[ -d /etc/decisionengine ]]; then
+            GWMS_SW=decisionengine
+        elif [[ -d /etc/gwms-frontend ]]; then
+            GWMS_SW=vofrontend
+        elif [[ -d /etc/gwms-decisionengine ]]; then
+            GWMS_SW=factory
+        else
+            echo "Error. Unable to determine what to restart."
+            help
+            exit 1
+        fi
     else
         echo "Error. Unable to determine what to install."
         help
@@ -253,6 +273,13 @@ start_common(){
     systemctl start condor    
 }
 
+restart_common(){
+    systemctl restart httpd
+    # A restart seemed not to fix condor
+    systemctl stop condor
+    systemctl start condor
+}
+
 start_logserver(){
     # Will start only if installed
     if [[ -f /etc/php-fpm.conf ]]; then
@@ -269,8 +296,21 @@ start_logserver(){
     fi
 }
 
+restart_logserver(){
+    # Will restart only if installed
+    if [[ -f /etc/php-fpm.conf ]]; then
+        systemctl restart php-fpm
+    fi
+}
+
 start_factory(){
     bash /opt/scripts/create-idtokens.sh -a
+    gwms-factory upgrade
+    systemctl start gwms-factory
+}
+
+restart_factory(){
+    systemctl stop gwms-factory
     gwms-factory upgrade
     systemctl start gwms-factory
 }
@@ -278,6 +318,14 @@ start_factory(){
 start_frontend(){
     bash /opt/scripts/create-idtokens.sh -r
     bash /opt/scripts/create-scitoken.sh -r
+    gwms-frontend upgrade
+    systemctl start gwms-frontend
+}
+
+restart_frontend(){
+    systemctl stop gwms-frontend
+    # Always recreate the scitoken (expires quickly, OK to have a new one)
+    bash /opt/scripts/create-scitoken.sh
     gwms-frontend upgrade
     systemctl start gwms-frontend
 }
@@ -299,7 +347,37 @@ And restart the DE
 EOF
 }
 
+restart_de(){
+    bash /opt/scripts/create-scitoken.sh -e
+    systemctl restart postgresql
+    #createdb -U postgres decisionengine
+    # Start Redis
+    #podman run --name decisionengine-redis -p 127.0.0.1:6379:6379 -d redis:6 --loglevel warning
+    cat << EOF
+To test with a NOP channel:
+cp /opt/config/decisionengine/test_nop_channel.jsonnet /etc/decisionengine/config.d/
+And restart the DE
+EOF
+}
+
 ### MAIN ###
+if "$ONLY_START"; then
+    # Restart
+    "$QUIET" || echo "Refresh only"
+    restart_common
+    restart_logserver
+    if [[ "$GWMS_SW" = factory ]]; then
+        restart_factory
+    elif [[ "$GWMS_SW" = vofrontend ]]; then
+        restart_frontend
+    elif [[ "$GWMS_SW" = decisionengine ]]; then
+        restart_de
+    else
+        echo "Error. Unexpected server type: $GWMS_SW"
+        exit 1
+    fi
+    exit 0
+fi
 # Install
 install_pre
 if $CHECK_ONLY; then
@@ -312,7 +390,7 @@ install_sw
 configure_common
 if [[ "$GWMS_SW" = factory ]]; then
     configure_factory
-elif [[ "$GWMS_SW" = frontend ]]; then
+elif [[ "$GWMS_SW" = vofrontend ]]; then
     configure_frontend
 elif [[ "$GWMS_SW" = decisionengine ]]; then
     configure_de
@@ -325,7 +403,7 @@ start_common
 start_logserver
 if [[ "$GWMS_SW" = factory ]]; then
     start_factory
-elif [[ "$GWMS_SW" = frontend ]]; then
+elif [[ "$GWMS_SW" = vofrontend ]]; then
     start_frontend
 elif [[ "$GWMS_SW" = decisionengine ]]; then
     start_de
