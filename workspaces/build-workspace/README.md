@@ -7,7 +7,8 @@ SPDX-License-Identifier: Apache-2.0
 
 Image for containers to build GlideinWMS releases.
 Contains all the necessary components for a build environment:
-Kerberos and kx509 for the authentication, Git, SVN, rpm-build, and osg-build.
+Kerberos for the authentication (kx509 missing), Git, SVN, rpm-build, and osg-build.
+
 
 Pull the container image, run it:
 ```commandline

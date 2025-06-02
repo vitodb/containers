@@ -37,8 +37,9 @@ RUN echo "Building the release building dev image ($BUILD_SHA/$BUILD_DATE) on $B
 # See gwms-workspace for the repos setup and base packages
 
 # Install Fermilab repo and packages, RPM build and OSG build packages
+# Removing fermilab-util_kx509, seems no more supported as of 2025-05-31
 RUN yum -y install https://linux-mirrors.fnal.gov/linux/fermilab/almalinux/9/yum-conf-fermilab.rpm && \
-    yum -y install krb5-workstation fermilab-conf_kerberos fermilab-util_kx509 svn rpm-build && \
+    yum -y install krb5-workstation fermilab-conf_kerberos svn rpm-build && \
     yum -y --enablerepo=osg-internal-development install osg-build-deps && \
     pip install pyyaml tox && \
     pip install 'git+https://github.com/opensciencegrid/osg-build'
