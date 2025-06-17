@@ -192,6 +192,7 @@ install_sw(){
     dnf install -y --enablerepo="$OSG_REPO" osg-ca-certs htgettoken  
 
     if [[ "$GWMS_SW" = decisionengine ]]; then
+        "$QUIET" || echo "DO Install - DE"
         dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$DE_REPO" decisionengine-onenode
         decisionengine-install-python
         # Git is in the package dependencies
@@ -199,6 +200,7 @@ install_sw(){
         # su -s /bin/bash -c 'pip install git+https://github.com/HEPCloud/decisionengine.git' - decisionengine
         # su -s /bin/bash -c 'pip install git+https://github.com/HEPCloud/decisionengine_modules.git' - decisionengine
     else
+        "$QUIET" || echo "DO Install - $GWMS_SW"
         # Install the GlideinWMS Factory/Frontend
         dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$GWMS_REPO" glideinwms-$GWMS_SW
     fi
@@ -208,6 +210,7 @@ install_sw(){
     fi
     # For now the example logserver is supported only on the Factory
     if "$GWMS_LOGSERVER" && [[ "$GWMS_SW" = factory ]]; then
+        "$QUIET" || echo "DO Install - logserver"
         dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$GWMS_REPO" glideinwms-logserver
     fi
 }
@@ -223,12 +226,14 @@ configure_common(){
 
 configure_factory(){
     # GlideinWMS Factory configuration
+    "$QUIET" || echo "DO Configure - factory"
     GWMS_CONFIG=/etc/gwms-factory/glideinWMS.xml
     cp /opt/config/factory/glideinWMS.xml $GWMS_CONFIG
     chown gfactory.gfactory $GWMS_CONFIG
-    echo Updated Factory configuration
-        
+    echo Updated Factory configuration file
+
     # Condor tarball
+    # These must match the Factory configuration in the factory-workspace/config
     CONDOR_TARBALL_URLS="
     https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.6/release/condor-24.0.6-$(arch)_AlmaLinux9-stripped.tar.gz
     https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.6/release/condor-24.0.6-$(arch)_AlmaLinux8-stripped.tar.gz
@@ -248,6 +253,7 @@ configure_factory(){
 
 configure_frontend(){
     # GlideinWMS Frontend configuration
+    "$QUIET" || echo "DO Configure - frontend"
     GWMS_CONFIG=/etc/gwms-frontend/frontend.xml
     cp /opt/config/frontend/frontend.xml $GWMS_CONFIG
     chown frontend.frontend $GWMS_CONFIG
@@ -255,6 +261,7 @@ configure_frontend(){
 }
 
 configure_de(){
+    "$QUIET" || echo "DO Configure - DE"
     postgresql-setup --initdb
     sed -e '/^local   all             all/s/peer/trust/' -e '/^host    all             all/s/ident/trust/' -i /var/lib/pgsql/data/pg_hba.conf
     # Without this the systemctl start was failing and the error was in /var/lib/pgsql/data/log/postgresql-*.log
@@ -379,6 +386,7 @@ if "$ONLY_START"; then
     exit 0
 fi
 # Install
+"$QUIET" || echo "DO Install"
 install_pre
 if $CHECK_ONLY; then
     echo "Listing available GlideinWMS packages and aborting"
@@ -387,6 +395,7 @@ if $CHECK_ONLY; then
 fi
 install_sw
 # Set up
+"$QUIET" || echo "DO Configure"
 configure_common
 if [[ "$GWMS_SW" = factory ]]; then
     configure_factory
@@ -399,6 +408,7 @@ else
     exit 1
 fi
 # Start
+"$QUIET" || echo "DO Start"
 start_common
 start_logserver
 if [[ "$GWMS_SW" = factory ]]; then
