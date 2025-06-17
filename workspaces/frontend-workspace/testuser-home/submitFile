@@ -1,6 +1,9 @@
 executable = test.sh
 output  = testjob.out 
 error   = testjob.err
+# To have separate per-job log files uncomment the following 2 lines
+#output  = testjob_$(Cluster)_$(Process).out
+#error   = testjob_$(Cluster)_$(Process).err
 log     = testjob.log
 should_transfer_files = yes
 request_memory = 102M

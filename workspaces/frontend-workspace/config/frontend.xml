@@ -50,7 +50,12 @@
       <attr name="GLIDECLIENT_Rank" glidein_publish="False" job_publish="False" parameter="True" type="string" value="1"/>
       <attr name="GLIDEIN_Expose_Grid_Env" glidein_publish="True" job_publish="True" parameter="False" type="string" value="True"/>
       <attr name="GLIDEIN_Singularity_Use" glidein_publish="True" job_publish="True" parameter="False" type="string" value="PREFERRED"/>
-      <attr name="SINGULARITY_IMAGES_DICT" glidein_publish="True" job_publish="True" parameter="False" type="string" value="default:/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-el9:latest,alpine:docker://alpine,rhel9:/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-el9:latest,rhel7:/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-el7:latest"/>
+       <!-- options to control images and container environment, uncomment as desired
+      <attr name="GLIDEIN_CONTAINER_ENV" glidein_publish="True" job_publish="True" parameter="True" type="string" value="keepall"/>
+      <attr name="SINGULARITY_IMAGE_RESTRICTIONS" glidein_publish="True" job_publish="True" parameter="True" type="string" value="remote,test"/>
+       -->
+       <!-- docker://frolvlad/alpine-bash - basic alpine (docker://alpine) has no bash and will fail GWMS invocation -->
+      <attr name="SINGULARITY_IMAGES_DICT" glidein_publish="True" job_publish="True" parameter="False" type="string" value="default:docker://frolvlad/alpine-bash:latest,alpine:docker://frolvlad/alpine-bash,rhel9:/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-el9:latest,rhel7:/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-el7:latest"/>
       <attr name="USE_MATCH_AUTH" glidein_publish="False" job_publish="False" parameter="True" type="string" value="True"/>
       <attr name="CONTINUE_IF_NO_PROXY" glidein_publish="False" job_publish="False" parameter="True" type="string" value="True"/>
    </attrs>
