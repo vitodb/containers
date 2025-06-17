@@ -25,6 +25,13 @@ LABEL name="FNAL Worker Node on SL7 with OSG 3.6 Worker Node Client"
 # removed:  gfal2-plugin-xrootd-2.18.1-2.el7.x86_64, verify why it was added, now also in OSG, it is a dependency of osg-wn-client
 # TODO: temporary using osg-development, should be removed after 11/5
 #  removed --enablerepo=osg-testing 2020-07-09
+
+# add CERN XRootD repo
+#RUN /usr/bin/wget https://cern.ch/xrootd/xrootd.repo -O /etc/yum.repos.d/xrootd.repo
+# the repo has zst compressed primary.xml, this is doesn't work with yum, opened https://github.com/xrootd/xrootd/issues/2546 to address the issue
+# for now install the required packages explictly usint their URL
+RUN yum  -y install https://xrootd.web.cern.ch/repo/stable/el7/x86_64/xrootd-client-libs-5.7.3-1.el7.x86_64.rpm https://xrootd.web.cern.ch/repo/stable/el7/x86_64/xrootd-libs-5.7.3-1.el7.x86_64.rpm https://xrootd.web.cern.ch/repo/stable/el7/x86_64/xrootd-client-5.7.3-1.el7.x86_64.rpm
+
 RUN yum install -y \
     osg-ca-certs \
     gcc-c++ libstdc++ xrootd-client-libs xrootd-libs xrootd-client osg-wn-client krb5-workstation strace redhat-lsb-core mesa-libGLU mesa-libGLU-devel libXmu cvmfs gstreamer-plugins-base libXScrnSaver libSM-devel libXpm-devel libgfortran glibc.i686 libXmu libXmu-devel expat-devel libxml2-devel mysql-libs libtiff libjpeg-turbo openssh-clients openssl-devel tzdata glibc-headers glibc-devel \
