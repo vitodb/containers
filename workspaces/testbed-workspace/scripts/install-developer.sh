@@ -6,8 +6,20 @@
 # Install development software
 # Used to minimize the software installed in the base image (testbed-workspace)
 
+if [[ "$1" = "-h" ]]; then
+    cat <<EOF
+$0 [options]
+Install some development software and GWMS aliases
+Options:
+ -h   print this message and exit
+EOF
+    exit 0
+fi
+
 # Development tools
-dnf install -y python3 git jq yq jc vim zsh sudo psmisc bind-utils mlocate
+# Removed yq (not available in regular RPM repos, go install github.com/mikefarah/yq/v4@latest - requires go 1.24)
+dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+dnf install -y yum python3 git gh bc jq jc vim zsh sudo psmisc bind-utils mlocate
 
 # Deploy GWMS aliases
 /usr/bin/wget -O ~/.bash_aliases https://raw.githubusercontent.com/glideinWMS/dev-tools/master/.bash_aliases && \
