@@ -35,7 +35,7 @@ do
 done
 
 echo Creating IDTOKENS for host $HOSTNAME ...
-# Without -lifetime, idtokens have no lifetime restrictions
+# Without -lifetime, idtokens have no lifetime restrictions (i.e. no expiration)
 condor_store_cred add -c -p "$HOSTNAME".$RANDOM
 [[ -n "$IS_FACTORY" || -n "$IS_FRONTEND" || -n "$IS_DE" ]] || echo "WARNING: This host is not identified as Factory, nor Frontend, nor Decision Engine."
 if [[ -n "$IS_FACTORY" ]]; then

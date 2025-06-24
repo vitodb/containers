@@ -22,7 +22,7 @@ Some notable tools used in these containers:
 ## Use
 
 To use the containers you need docker or podman (recommended).
-You need also a cloned version of this repository. At least the conpose files in this direcotry.
+You need also a cloned version of this repository. At least the compose files in this directory.
 ```
 cd /myworkdir
 mkdir ws-test; cd ws-test
@@ -30,30 +30,36 @@ TEST_DIR=$(pwd)
 git clone https://github.com/glideinWMS/containers.git
 cd containers/workspaces
 ```
-Then you can start the GlideinWMS ITB setup with the following commands.
-`IMAGE_NAMESPACE` is optional, allows to pick a different repository, you can use local or also a full path like `docker.io/USERNAME/IMAGE`, `glideinwms` namespace is the default.
-`podman-compose up` builds unavailable images, so use the pull command to download the all the images from the repository (e.g. glideinwms on Docker Hub) if you prefer so:
+
+You have two options. To use the ITB setup with pre-installed workspaces (keep reading) or to use the [Testbed setup documented later in this document](#testbed-setup),
+which is starting from bare-bone workspaces and installing GlideinWMS via the provided [install script](testbed-workspace/scripts/install-glideinwms.sh).
+
+You can start the GlideinWMS ITB setup with the following commands.
+The `IMAGE_NAMESPACE` variable is optional, allows to pick a different repository, you can use a local name or also a full path like `docker.io/USERNAME/IMAGE`; the `glideinwms` namespace is the default.
+The `podman-compose up` command builds unavailable images, so use the pull command to download the all the images from the repository (e.g. glideinwms on Docker Hub) if you prefer so:
 ```bash
 IMAGE_NAMESPACE=docker.io/glideinwms podman-compose pull
 ```
-If you want to build all the images, including gwms-workspace, and download only the small almalinux 9, use:
+If you want to build all the images, including the gwms-workspace, and download only the small almalinux 9, use:
 ```bash
 podman-compose -f compose-buildbase.yml build
 ```
-And then start (and build if needed) the main images using the compose.yml file.
-`GMWS_PATH` is a common directory, e.g. for the GWMS sources; it is optional, the directory is created if not existing, and a local shared volume is used if not passed.
+Finally you can start (and build if needed) the main ITB images using the compose.yml file.
+The `GMWS_PATH` variable points to a common directory, e.g. for the GWMS sources; it is optional, the directory is created if not existing, and a shared volume local to the containers is used if not passed (i.e. if GMWS_PATH is not defined).
 ```bash
 # Assuming you are in the workspaces directory and TEST_DIR is defined from above
 mkdir "$TEST_DIR"/gwms  # Optional, if you'd like to put something in it
 GWMS_PATH="$TEST_DIR"/gwms/ podman-compose up -d
 ```
-and bring it down with `podman-compose down`.
+
+To bring down the ITB setup use `podman-compose down`.
 
 Note that this ITB setup uses a local private virtual network, with outbound and no inbound connectivity. 
 The domain is fictionary, `glideinwms.org`, but everything works because DNS, certificates and config files 
 are configured consistently.
 Do not use this setup connected to the open Internet. The CA certificate and key used to self-sign the ITB
 host certificates are publicly available, anyone can generate new host certificates!
+All the ITB containers are built for multiple architectures: x84_64 (for Intel or AMD processors) and aarch64 (for ARM processors like on M1 Macs).
 
 You can also use different versions of the ITB images and containers.
 E.g. to run with SL7 nodes:
@@ -84,6 +90,10 @@ podman exec -it frontend-workspace.glideinwms.org /opt/scripts/run-test.sh
 podman exec -it ce-workspace.glideinwms.org /bin/bash
 podman exec -it factory-workspace.glideinwms.org /bin/bash
 podman exec -it frontend-workspace.glideinwms.org /bin/bash
+
+# To refresh the SciToken and submit new test jobs in the frontend-workspace:
+/opt/scripts/create-scitoken.sh -r
+/opt/scripts/run-test.sh
 ```
 
 ## To manually build SL7 or EL8 containers

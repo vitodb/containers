@@ -9,7 +9,8 @@ PASSPHRASE="glideinwms"
 
 help_msg() {
     cat << EOF
-$0 [options] 
+$0 [options]
+Initialize the self-signed GlideinWMS host certificate
   -h       print this message
   -v       verbose mode
   -s DIR   secrets source directory (default: $SECRETS_SRC_DIR)
@@ -27,6 +28,7 @@ do
     s) SECRETS_SRC_DIR=$OPTARG;;
     d) SECRETS_DIR=$OPTARG;;
     p) PASSPHRASE=$OPTARG;;
+    *) echo "Invalid option: ${option}"; help_msg; exit 1;;
   esac
 done
 

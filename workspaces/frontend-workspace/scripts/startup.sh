@@ -74,6 +74,6 @@ else
 fi
 # All the times
 # Always recreate the scitoken (expires quickly, OK to have a new one)
-bash /opt/scripts/create-scitoken.sh
+bash /opt/scripts/create-scitoken.sh -r
 gwms-frontend upgrade
 systemctl start gwms-frontend
