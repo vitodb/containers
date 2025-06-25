@@ -235,8 +235,8 @@ configure_factory(){
     # Condor tarball
     # These must match the Factory configuration in the factory-workspace/config
     CONDOR_TARBALL_URLS="
-    https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.10/release/condor-24.0.10-$(arch)_AlmaLinux9-stripped.tar.gz
-    https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.10/release/condor-24.0.10-$(arch)_AlmaLinux8-stripped.tar.gz
+    https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.8/release/condor-24.0.8-$(arch)_AlmaLinux9-stripped.tar.gz
+    https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.8/release/condor-24.0.8-$(arch)_AlmaLinux8-stripped.tar.gz
     https://research.cs.wisc.edu/htcondor/tarball/10/10.x/10.6.0/release/condor-10.6.0-$(arch)_AlmaLinux9-stripped.tar.gz
     https://research.cs.wisc.edu/htcondor/tarball/9.0/9.0.18/release/condor-9.0.18-x86_64_CentOS7-stripped.tar.gz
     "

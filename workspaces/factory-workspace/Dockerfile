@@ -7,6 +7,7 @@ ARG IMAGE_NAMESPACE=glideinwms
 FROM $IMAGE_NAMESPACE/gwms-workspace:$GWMS_VERSION
 # NOTE: if you need GWMS_VERSION after FROM (e.g. in labels), you need to repeat it
 ARG GWMS_VERSION=latest
+ARG HTC_VERSION=24.0.8
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 ARG BUILD_VERSION=dev
@@ -57,14 +58,14 @@ RUN ln -s /opt/scripts/* /usr/local/bin
 # The packaged not for Alma9 should be left as tar file to avoid tar building and ldd use incompatible with Alma9
 # TODO: Keep this in sync with glideinWMS.xml and install-glideinwms.sh
 RUN pushd /var/lib/gwms-factory/condor ;\
-    wget https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.10/release/condor-24.0.10-$(arch)_AlmaLinux9-stripped.tar.gz ;\
-    tar -xf condor-24.0.10-$(arch)_AlmaLinux9-stripped.tar.gz ;\
-    rm -f condor-24.0.10-$(arch)_AlmaLinux9-stripped.tar.gz ;\
+    wget https://research.cs.wisc.edu/htcondor/tarball/24.0/$HTC_VERSION/release/condor-$HTC_VERSION-$(arch)_AlmaLinux9-stripped.tar.gz ;\
+    tar -xf condor-$HTC_VERSION-$(arch)_AlmaLinux9-stripped.tar.gz ;\
+    rm -f condor-$HTC_VERSION-$(arch)_AlmaLinux9-stripped.tar.gz ;\
     wget https://research.cs.wisc.edu/htcondor/tarball/10/10.x/10.6.0/release/condor-10.6.0-$(arch)_AlmaLinux9-stripped.tar.gz ;\
     tar -xf condor-10.6.0-$(arch)_AlmaLinux9-stripped.tar.gz ;\
     rm -f condor-10.6.0-$(arch)_AlmaLinux9-stripped.tar.gz ;\
-    wget https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.10/release/condor-24.0.10-$(arch)_AlmaLinux8-stripped.tar.gz ;\
-    tar -xf condor-24.0.10-$(arch)_AlmaLinux8-stripped.tar.gz ;\
+    wget https://research.cs.wisc.edu/htcondor/tarball/24.0/$HTC_VERSION/release/condor-$HTC_VERSION-$(arch)_AlmaLinux8-stripped.tar.gz ;\
+    tar -xf condor-$HTC_VERSION-$(arch)_AlmaLinux8-stripped.tar.gz ;\
     wget https://research.cs.wisc.edu/htcondor/tarball/9.0/9.0.18/release/condor-9.0.18-x86_64_CentOS7-stripped.tar.gz ;\
     tar -xf condor-9.0.18-x86_64_CentOS7-stripped.tar.gz ;\
     popd

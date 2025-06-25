@@ -36,7 +36,9 @@ which is starting from bare-bone workspaces and installing GlideinWMS via the pr
 
 You can start the GlideinWMS ITB setup with the following commands.
 The `IMAGE_NAMESPACE` variable is optional, allows to pick a different repository, you can use a local name or also a full path like `docker.io/USERNAME/IMAGE`; the `glideinwms` namespace is the default.
-The `podman-compose up` command builds unavailable images, so use the pull command to download the all the images from the repository (e.g. glideinwms on Docker Hub) if you prefer so:
+The `podman-compose up` command builds unavailable images, so use the pull command to download the all the images from the repository (e.g. glideinwms on Docker Hub) if you prefer so.
+The compose file contains both the image path and the build instructions, so if the images are not available podman-compose will prioritize building new images.
+If you want to download them you have to pull them first:
 ```bash
 IMAGE_NAMESPACE=docker.io/glideinwms podman-compose pull
 ```
