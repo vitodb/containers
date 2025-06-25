@@ -159,13 +159,14 @@
       </entry>
    </entries>
    <condor_tarballs>
-      <condor_tarball arch="default" os="default" version="default" base_dir="/var/lib/gwms-factory/condor/condor-24.0.6-1-[ARCH]_AlmaLinux9-stripped"/>
-      <condor_tarball arch="[ARCH]"  os="rhel9"   version="default" base_dir="/var/lib/gwms-factory/condor/condor-24.0.6-1-[ARCH]_AlmaLinux9-stripped"/>
-      <condor_tarball arch="[ARCH]"  os="rhel9"   version="24.0.6"  base_dir="/var/lib/gwms-factory/condor/condor-24.0.6-1-[ARCH]_AlmaLinux9-stripped"/>
+      <!-- TODO: Update both install-glideinwms.sh and the factory-workspace/Dockerfile to be in sync w/ this file -->
+      <condor_tarball arch="default" os="default" version="default" base_dir="/var/lib/gwms-factory/condor/condor-24.0.10-1-[ARCH]_AlmaLinux9-stripped"/>
+      <condor_tarball arch="[ARCH]"  os="rhel9"   version="default" base_dir="/var/lib/gwms-factory/condor/condor-24.0.10-1-[ARCH]_AlmaLinux9-stripped"/>
+      <condor_tarball arch="[ARCH]"  os="rhel9"   version="24.0.10"  base_dir="/var/lib/gwms-factory/condor/condor-24.0.10-1-[ARCH]_AlmaLinux9-stripped"/>
       <condor_tarball arch="[ARCH]"  os="rhel9"   version="10.6.0"  base_dir="/var/lib/gwms-factory/condor/condor-10.6.0-1-[ARCH]_AlmaLinux9-stripped"/>
       <!-- WARNING: Using the tar file to avoid tar building and ldd use incompatible with aarch64 -->
-      <condor_tarball arch="x86_64"  os="rhel8"   version="default" tar_file="/var/lib/gwms-factory/condor/condor-24.0.6-[ARCH]_AlmaLinux8-stripped.tar.gz"/>
-      <condor_tarball arch="x86_64"  os="rhel8"   version="24.0.6"  tar_file="/var/lib/gwms-factory/condor/condor-24.0.6-[ARCH]_AlmaLinux8-stripped.tar.gz"/>
+      <condor_tarball arch="x86_64"  os="rhel8"   version="default" tar_file="/var/lib/gwms-factory/condor/condor-24.0.10-[ARCH]_AlmaLinux8-stripped.tar.gz"/>
+      <condor_tarball arch="x86_64"  os="rhel8"   version="24.0.10"  tar_file="/var/lib/gwms-factory/condor/condor-24.0.10-[ARCH]_AlmaLinux8-stripped.tar.gz"/>
       <condor_tarball arch="x86_64"  os="rhel7"   version="default" tar_file="/var/lib/gwms-factory/condor/condor-9.0.18-x86_64_CentOS7-stripped.tar.gz"/>
       <condor_tarball arch="x86_64"  os="rhel7"   version="9.0.18"  tar_file="/var/lib/gwms-factory/condor/condor-9.0.18-x86_64_CentOS7-stripped.tar.gz"/>
    </condor_tarballs>
