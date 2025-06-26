@@ -17,6 +17,8 @@ GWMS_SW=
 GWMS_LOGSERVER=false
 CHECK_ONLY=false
 GWMS_USE_CUSTOM_REPO=
+# Condor version to use for Glidein tarballs
+HTC_VERSION=24.0.8
 # Outside mounted directory with shared files
 GWMS_DIR=/opt/gwms
 ONLY_START=false
@@ -25,7 +27,7 @@ QUIET=true
 help(){
     cat <<EOF 
 $0 [options]
-Install the EL9 version of the specified GlideinWMS software
+Install the EL9 version of the specified GlideinWMS software (Factory, Frontend or HEPCloud Decision Engine)
 --help                      Print this
 --osg-repo OSG_REPO         Set the repository for the OSG osg-ca-certs, e.g. osg-development, osg (defaults to GWMS_REPO)
 --gwms-repo GWMS_REPO       Set the GlideinWMS repository, e.g. osg-development (default), osg, upcoming-development
@@ -220,8 +222,9 @@ install_sw(){
 
 configure_common(){
     # HTCondor configuration
-    cp /opt/config/99-debug.conf /etc/condor/config.d
-    cp /opt/config/99-cafile.conf /etc/condor/config.d
+    cp /opt/config/99-debug.conf /etc/condor/config.d/
+    # httpd hardening
+    cp /opt/config/httpd_sec.conf /etc/httpd/conf.d/    
 }
 
 configure_factory(){
@@ -235,8 +238,8 @@ configure_factory(){
     # Condor tarball
     # These must match the Factory configuration in the factory-workspace/config
     CONDOR_TARBALL_URLS="
-    https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.8/release/condor-24.0.8-$(arch)_AlmaLinux9-stripped.tar.gz
-    https://research.cs.wisc.edu/htcondor/tarball/24.0/24.0.8/release/condor-24.0.8-$(arch)_AlmaLinux8-stripped.tar.gz
+    https://research.cs.wisc.edu/htcondor/tarball/24.0/${HTC_VERSION}/release/condor-${HTC_VERSION}-$(arch)_AlmaLinux9-stripped.tar.gz
+    https://research.cs.wisc.edu/htcondor/tarball/24.0/${HTC_VERSION}/release/condor-${HTC_VERSION}-$(arch)_AlmaLinux8-stripped.tar.gz
     https://research.cs.wisc.edu/htcondor/tarball/10/10.x/10.6.0/release/condor-10.6.0-$(arch)_AlmaLinux9-stripped.tar.gz
     https://research.cs.wisc.edu/htcondor/tarball/9.0/9.0.18/release/condor-9.0.18-x86_64_CentOS7-stripped.tar.gz
     "
@@ -249,6 +252,9 @@ configure_factory(){
         tar -xf "$CONDOR_TARBALL"
     done
     popd || exit 4
+    
+    # HTCondor configuration
+    cp /opt/config/99-cafile.conf /etc/condor/config.d/
 }
 
 configure_frontend(){

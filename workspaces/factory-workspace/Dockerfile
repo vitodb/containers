@@ -70,12 +70,13 @@ RUN pushd /var/lib/gwms-factory/condor ;\
     tar -xf condor-9.0.18-x86_64_CentOS7-stripped.tar.gz ;\
     popd
 
-# Deploy GlideinWMS Factory and HTCondor configuration
+# Deploy GlideinWMS Factory, httpd, and HTCondor configuration
 COPY factory-workspace/config/glideinWMS.xml /etc/gwms-factory/glideinWMS.xml
 RUN sed -i "s/\[ARCH\]/$(arch)/g" /etc/gwms-factory/glideinWMS.xml
 RUN chown gfactory:gfactory /etc/gwms-factory/glideinWMS.xml
 COPY shared/config/99-debug.conf /etc/condor/config.d/99-debug.conf
 COPY shared/config/99-cafile.conf /etc/condor/config.d/99-cafile.conf
+COPY shared/config/httpd_sec.conf /etc/httpd/conf.d/httpd_sec.conf
 
 # Default entry point
 CMD ["/bin/bash"]

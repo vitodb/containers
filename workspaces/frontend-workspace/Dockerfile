@@ -37,8 +37,8 @@ RUN echo "Building Frontend dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM
 # See gwms-workspace for the repos setup and base packages
 
 # Install GlideinWMS Frontend
-RUN yum -y install --enablerepo=osg-development glideinwms-vofrontend
-RUN rm -f /etc/condor/config.d/00-minicondor
+RUN yum -y install --enablerepo=osg-development glideinwms-vofrontend; \
+    rm -f /etc/condor/config.d/00-minicondor
 
 # This must be after all dnf/yum and pip commands
 # Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
@@ -49,12 +49,13 @@ COPY shared/scripts /opt/scripts
 COPY frontend-workspace/scripts/* /opt/scripts/
 RUN ln -s /opt/scripts/* /usr/local/bin
 
-# Deploy GlideinWMS Frontend and HTCondor configuration
+# Deploy GlideinWMS Frontend, httpd, and HTCondor configuration
 COPY frontend-workspace/config/frontend.xml /etc/gwms-frontend/frontend.xml
 RUN chown frontend:frontend /etc/gwms-frontend/frontend.xml
 COPY shared/config/99-debug.conf /etc/condor/config.d/99-debug.conf
+COPY shared/config/httpd_sec.conf /etc/httpd/conf.d/httpd_sec.conf
 
-# Add HTCondor files to test user abc
+# Add HTCondor files to test user for test jobs submission
 RUN useradd testuser
 COPY --chown=testuser:testuser frontend-workspace/testuser-home/* /home/testuser/
 
