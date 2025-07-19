@@ -36,31 +36,44 @@ done
 
 echo Creating IDTOKENS for host $HOSTNAME ...
 # Without -lifetime, idtokens have no lifetime restrictions (i.e. no expiration)
-condor_store_cred add -c -p "$HOSTNAME".$RANDOM
+if ! condor_store_cred add -c -p "$HOSTNAME".$RANDOM; then
+    echo "WARNING: condor_store_cred failed"
+fi
 [[ -n "$IS_FACTORY" || -n "$IS_FRONTEND" || -n "$IS_DE" ]] || echo "WARNING: This host is not identified as Factory, nor Frontend, nor Decision Engine."
 if [[ -n "$IS_FACTORY" ]]; then
     TOKEN_DIR=/var/lib/gwms-factory/.condor/tokens.d
-    condor_token_create -id vofrontend_service@"$HOSTNAME" -key POOL > "$TOKEN_DIR"/frontend."$HOSTNAME".idtoken
-    condor_token_create -id gfactory@"$HOSTNAME" > "$TOKEN_DIR"/gfactory."$HOSTNAME".idtoken
-    chown gfactory:gfactory "$TOKEN_DIR"/gfactory.*
-    chmod 600 "$TOKEN_DIR"/gfactory.*
+    failed_command=false
+    condor_token_create -id vofrontend_service@"$HOSTNAME" -key POOL > "$TOKEN_DIR"/frontend."$HOSTNAME".idtoken || failed_command=true
+    condor_token_create -id gfactory@"$HOSTNAME" > "$TOKEN_DIR"/gfactory."$HOSTNAME".idtoken || failed_command=true
+    if $failed_command; then
+        echo "WARNING: condor_token_create failed"
+    else
+        chown gfactory:gfactory "$TOKEN_DIR"/gfactory.*
+        chmod 600 "$TOKEN_DIR"/gfactory.*
+    fi
     # TODO: check if the frontend.* token should have different owner/permission
     echo Factory:
     ls -lah "$TOKEN_DIR"
 fi
 if [[ -n "$IS_FRONTEND" ]]; then
     TOKEN_DIR=/var/lib/gwms-frontend/.condor/tokens.d
-    condor_token_create -id vofrontend_service@"$HOSTNAME" -key POOL > "$TOKEN_DIR"/frontend."$HOSTNAME".idtoken
-    chown frontend:frontend "$TOKEN_DIR"/frontend.*
-    chmod 600 "$TOKEN_DIR"/frontend.*
+    if condor_token_create -id vofrontend_service@"$HOSTNAME" -key POOL > "$TOKEN_DIR"/frontend."$HOSTNAME".idtoken; then
+        chown frontend:frontend "$TOKEN_DIR"/frontend.*
+        chmod 600 "$TOKEN_DIR"/frontend.*
+    else
+        echo "WARNING: condor_token_create failed"
+    fi
     echo Frontend:
     ls -lah "$TOKEN_DIR"
 fi
 if [[ -n "$IS_DE" ]]; then
     TOKEN_DIR=/var/lib/decisionengine/.condor/tokens.d
-    condor_token_create -id decisionengine_service@"$HOSTNAME" -key POOL > "$TOKEN_DIR"/decisionengine."$HOSTNAME".idtoken
-    chown decisionengine:decisionengine "$TOKEN_DIR"/decisionengine.*
-    chmod 600 "$TOKEN_DIR"/decisionengine.*
+    if condor_token_create -id decisionengine_service@"$HOSTNAME" -key POOL > "$TOKEN_DIR"/decisionengine."$HOSTNAME".idtoken; then
+        chown decisionengine:decisionengine "$TOKEN_DIR"/decisionengine.*
+        chmod 600 "$TOKEN_DIR"/decisionengine.*
+    else
+        echo "WARNING: condor_token_create failed"
+    fi
     echo Decision Engine:
     ls -lah "$TOKEN_DIR"
 fi

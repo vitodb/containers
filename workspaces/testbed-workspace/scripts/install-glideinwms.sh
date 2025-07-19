@@ -338,7 +338,7 @@ start_frontend(){
 restart_frontend(){
     systemctl stop gwms-frontend
     # Always recreate the scitoken (expires quickly, OK to have a new one)
-    bash /opt/scripts/create-scitoken.sh
+    bash /opt/scripts/create-scitoken.sh -r
     gwms-frontend upgrade
     systemctl start gwms-frontend
 }
@@ -374,6 +374,7 @@ EOF
 }
 
 ### MAIN ###
+echo "$(date) - GWMS Install invoked: $0 $*" >> "$HOME"/gwms-install.log
 if "$ONLY_START"; then
     # Restart
     "$QUIET" || echo "Refresh only"
@@ -427,3 +428,4 @@ else
     echo "Error. Unexpected server type: $GWMS_SW"
     exit 1
 fi
+echo "$(date) - GWMS Install completed successfully" >> "$HOME"/gwms-install.log
