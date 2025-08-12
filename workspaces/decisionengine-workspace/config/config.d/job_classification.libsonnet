@@ -116,7 +116,9 @@
           "GLIDEIN_GridType",
           "TotalSlots",
           "TotalSlotCpus",
-          "GLIDEIN_CredentialIdentifier"
+          "GLIDEIN_CredentialIdentifier",
+          "GLIDEIN_MASTER_NAME",
+          "GLIDEIN_Site"
         ],
         correction_map : {
           "SlotType":'',
@@ -134,7 +136,9 @@
           "GLIDEIN_GridType":'',
           "TotalSlots":0,
           "TotalSlotCpus":0,
-          "GLIDEIN_CredentialIdentifier":''
+          "GLIDEIN_CredentialIdentifier":'',
+          "GLIDEIN_MASTER_NAME": '',
+          "GLIDEIN_Site": ''
         },
         collector_host: "decisionengine-workspace.glideinwms.org:9618",
         condor_config: "/etc/condor/condor_config"
