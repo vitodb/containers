@@ -195,8 +195,8 @@ install_sw(){
 
     if [[ "$GWMS_SW" = decisionengine ]]; then
         "$QUIET" || echo "DO Install - DE"
-        dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$DE_REPO" decisionengine-onenode
-        decisionengine-install-python
+        dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$DE_REPO" decisionengine-onenode || return 1
+        decisionengine-install-python || return 2
         # Git is in the package dependencies
         # pip install git+https://github.com/HEPCloud/decisionengine.git@2.0.3
         # su -s /bin/bash -c 'pip install git+https://github.com/HEPCloud/decisionengine.git' - decisionengine
@@ -204,11 +204,11 @@ install_sw(){
     else
         "$QUIET" || echo "DO Install - $GWMS_SW"
         # Install the GlideinWMS Factory/Frontend
-        dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$GWMS_REPO" glideinwms-$GWMS_SW
+        dnf install -y --enablerepo="$OSG_REPO" --enablerepo="$GWMS_REPO" glideinwms-$GWMS_SW || return 1
     fi
     if [[ "$GWMS_SW" = vofrontend ]]; then
         # sudo is required by the run-test script
-        dnf install -y sudo
+        dnf install -y sudo || return 3
     fi
     # For now the example logserver is supported only on the Factory
     if "$GWMS_LOGSERVER" && [[ "$GWMS_SW" = factory ]]; then
@@ -394,13 +394,19 @@ if "$ONLY_START"; then
 fi
 # Install
 "$QUIET" || echo "DO Install"
-install_pre
+if ! install_pre; then
+    echo "Error. Failed install pre-requisites. There may be a network/firewall problem. Aborting."
+    exit 1
+fi
 if $CHECK_ONLY; then
     echo "Listing available GlideinWMS packages and aborting"
     dnf list --enablerepo="$GWMS_REPO" glideinwms\* decision\*
     exit 0
 fi
-install_sw
+if ! install_sw; then
+    echo "Error. Failed to install $GWMS_SW ($?). There may be a network/firewall problem. Aborting."
+    exit 1
+fi
 # Set up
 "$QUIET" || echo "DO Configure"
 configure_common
