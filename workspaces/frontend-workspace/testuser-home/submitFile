@@ -1,4 +1,6 @@
 executable = test.sh
+# To test also for Apptainer/Singularity, uncomment the following line
+# executable = test-sing.sh
 output  = testjob.out 
 error   = testjob.err
 # To have separate per-job log files uncomment the following 2 lines

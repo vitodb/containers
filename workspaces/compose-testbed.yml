@@ -18,6 +18,10 @@ services:
         - ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:${IMAGE_LABEL-latest}
       dockerfile: ce-workspace/Dockerfile
     image: ${IMAGE_NAMESPACE-glideinwms}/ce-workspace:${IMAGE_LABEL-latest}
+    # To run sshd you need: --cap-add AUDIT_WRITE  --cap-add AUDIT_CONTROL
+    cap_add:
+      - AUDIT_WRITE
+      - AUDIT_CONTROL    
     # To run apptainer you need:
     # --security-opt seccomp=unconfined --security-opt systempaths=unconfined [--security-opt no-new-privileges] --device /dev/fuse
     # OR --privileged --device /dev/fuse

@@ -30,14 +30,14 @@ LABEL name="Devcontainer for an EL7/8/9 HTCondorCE and worker to be used for Gli
       org.opencontainers.image.created="$BUILD_DATE"\
       org.glideinwms.image.version="$GWMS_VERSION"
 # Declaring ports: htcondor-CE(shared port)
-EXPOSE 9619
+EXPOSE 22 9619
 
 RUN echo "Building CE dev image ($BUILD_SHA/$BUILD_DATE) on $BUILDPLATFORM, for $TARGETPLATFORM"
 
 # See gwms-workspace for the repos setup and base packages
 
-# Install HTCondor-CE
-RUN yum -y install htcondor-ce-condor
+# Install HTCondor-CE and ssh server (for BOSCO)
+RUN yum -y install htcondor-ce-condor openssh-server
 
 # This must be after all dnf/yum and pip commands
 # Cleaning YUM and DNF all caches (including disabled repos) and pip caches to reduce size of image
@@ -60,10 +60,11 @@ RUN rm -f /etc/condor/config.d/00-minicondor
 RUN mkdir -p /opt/containers/apptainer && cd /opt/containers/ && \
     /opt/scripts/local-container.sh || echo "Need to post-install local container"
 # Added safeguard to allow late container installation
- 
-# Add fermilab and osg (allows for Google CA in CILogon) users
+
+# Add fermilab and osg (allows for Google CA in CILogon) users. Add separate BOSCO user
 RUN useradd fermilab ;\
-    useradd osg
+    useradd osg ;\
+    useradd bosco
 
 # Default entry point
 CMD ["/bin/bash"]

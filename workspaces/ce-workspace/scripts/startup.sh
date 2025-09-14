@@ -32,11 +32,17 @@ done
 
 if $FULL_STARTUP; then
     [[ -n "$VERBOSE" ]] && echo "Full startup" || true
+    # Generate httpd self-signed host certificates
     bash /opt/scripts/create-host-certificate.sh -d "$GWMS_DIR"/secrets
+    # Generate host keys for sshd if they are missing
+    [[  -f /etc/ssh/ssh_host_rsa_key ]] || ssh-keygen -A
+    # can check ssh configuration with: sshd -t  
+    systemctl start sshd
     systemctl start condor
     systemctl start condor-ce
 else
     [[ -n "$VERBOSE" ]] && echo "Refresh only" || true
+    systemctl restart sshd  # in case the configuration changes
     systemctl restart condor  # in case the configuration changes
     systemctl restart condor-ce  # in case the configuration changes
 fi

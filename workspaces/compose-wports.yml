@@ -5,6 +5,7 @@
 # GWMS_PATH: 'gwms-dev-local'
 # Variables used in imported compose.yml
 # Factory ports are bound in the 30000 range, Frontend in the 40000, CEs in the 20000
+# To expose also BOSCO on the CE add "- 20022:22" to its ports
 
 services:
 
