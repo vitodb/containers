@@ -52,7 +52,7 @@ use_option_ctr=0
 [[ "$* " = *"--use-build "* ]] && ((use_option_ctr++)) || true
 [[ "$* " = *"--use-ssi-dev "* ]] && ((use_option_ctr++)) || true
 [[ "$* " = *"--use-ssi "* ]] && ((use_option_ctr++)) || true
-if [[ "$use_option_ctr" -gt 0 ]]; then
+if [[ "$use_option_ctr" -gt 1 ]]; then
     echo "Error. Cannot enable both --use-build and --use-ssi."
     help
     exit 1
