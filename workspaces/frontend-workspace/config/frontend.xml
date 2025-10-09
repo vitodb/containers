@@ -37,7 +37,10 @@
    <monitor_footer display_txt="" href_link=""/>
    <security classad_proxy="/etc/grid-security/hostcert.pem" comment="Test Factory at frontend-workspace.glideinwms.org" proxy_DN="/C=US/ST=Illinois/L=Batavia/O=GlideinWMS/CN=frontend-workspace.glideinwms.org" proxy_selection_plugin="ProxyAll" security_name="vofrontend_service" sym_key="aes_256_cbc">
       <credentials>
-         <credential absfname="/var/lib/gwms-frontend/.condor/tokens.d/frontend-workspace.glideinwms.org.scitoken" security_class="frontend" trust_domain="grid" type="scitoken"/>
+          <credential absfname="/var/lib/gwms-frontend/.condor/tokens.d/frontend-workspace.glideinwms.org.scitoken" security_class="frontend" trust_domain="grid" type="scitoken"/>
+          <!-- uncomment to add BOSCO keys (keys must be present)
+          <credential absfname="/var/lib/gwms-frontend/cred.d/keys.d/boscokey.pub" keyabsfname="/var/lib/gwms-frontend/cred.d/keys.d/boscokey" security_class="frontend" trust_domain="bosco" type="key_pair"/>
+          -->
       </credentials>
    </security>
    <stage base_dir="/var/lib/gwms-frontend/web-area/stage" use_symlink="True" web_base_url="http://frontend-workspace.glideinwms.org/vofrontend/stage"/>

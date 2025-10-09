@@ -99,6 +99,45 @@
          <monitorgroups>
          </monitorgroups>
       </entry>
+      <entry name="bosco-ce-workspace.glideinwms.org" enabled="False" gatekeeper="bosco@ce-workspace.glideinwms.org" gridtype="batch condor" bosco_dir="altbosco" verbosity="std" work_dir="AUTO" trust_domain="bosco" auth_method="key_pair">
+         <config>
+            <max_jobs>
+               <per_entry held="2" idle="4" glideins="10"/>
+               <default_per_frontend held="2" idle="4" glideins="10"/>
+               <per_frontends>
+               </per_frontends>
+            </max_jobs>
+            <release max_per_cycle="20" sleep="0.2"/>
+            <remove max_per_cycle="5" sleep="0.2"/>
+            <restrictions require_voms_proxy="False"/>
+            <submit cluster_size="10" max_per_cycle="100" sleep="0.2">
+                <submit_attrs>
+                    <!-- <submit_attr name="+remote_queue" value='"serial"'/> -->
+                    <submit_attr name="+maxMemory" value="(RequestMemory ?: 1)"/>
+                </submit_attrs>
+            </submit>
+         </config>
+         <allow_frontends>
+         </allow_frontends>
+         <attrs>
+            <attr name="GLIDEIN_Site" const="True" glidein_publish="True" job_publish="True" parameter="True" publish="True" type="string" value="bosco-ce-workspace.glideinwms.org"/>
+            <attr name="CONDOR_VERSION" const="False" glidein_publish="False" job_publish="False" parameter="True" publish="True" type="string" value="default"/>
+            <attr name="CONDOR_ARCH" const="False" glidein_publish="False" job_publish="False" parameter="True" publish="True" type="string" value="[ARCH]"/>
+            <attr name="CONDOR_OS" const="False" glidein_publish="False" job_publish="False" parameter="True" publish="True" type="string" value="rhel9"/>
+             <!-- Uncomment the following lines to enable cvmfsexec (mountrepo)
+            <attr name="GLIDEIN_USE_CVMFSEXEC" const="False" glidein_publish="True" job_publish="False" parameter="True" publish="True" type="int" value="1"/>
+            <attr name="CVMFS_SRC" const="False" glidein_publish="True" job_publish="False" parameter="True" publish="True" type="string" value="osg"/>
+            <attr name="GLIDEIN_CVMFS" const="False" glidein_publish="True" job_publish="False" parameter="True" publish="True" type="string" value="REQUIRED"/>
+            <attr name="GLIDEIN_CVMFS_REPOS" const="False" glidein_publish="True" job_publish="False" parameter="True" publish="True" type="string" value="singularity.opensciencegrid.org"/>
+            -->
+         </attrs>
+         <files>
+         </files>
+         <infosys_refs>
+         </infosys_refs>
+         <monitorgroups>
+         </monitorgroups>
+      </entry>
       <entry name="el7ce-workspace.glideinwms.org" enabled="False" gatekeeper="el7ce-workspace.glideinwms.org el7ce-workspace.glideinwms.org:9619" gridtype="condor" verbosity="std" work_dir="AUTO" trust_domain="grid" auth_method="scitoken">
          <config>
             <max_jobs>
